@@ -77,7 +77,7 @@ export function useUpsertPrediction() {
       const { data, error } = await supabase
         .from('predictions')
         .upsert([dbPrediction], {
-          onConflict: 'week_id,predictor_id,target_id',
+          onConflict: 'week_id,predictor_id,target_id,game_number',
         })
         .select()
         .single();
@@ -125,7 +125,7 @@ export function useBatchUpsertPredictions() {
       const { data, error } = await supabase
         .from('predictions')
         .upsert(dbPredictions, {
-          onConflict: 'week_id,predictor_id,target_id',
+          onConflict: 'week_id,predictor_id,target_id,game_number',
         })
         .select();
       
