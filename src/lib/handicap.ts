@@ -11,7 +11,7 @@ export const HANDICAP_BASE = 215;
 export const HANDICAP_PERCENTAGE = 0.9;
 
 export function calculateHandicap(average: number): number {
-  if (average >= HANDICAP_BASE) return 0; // No handicap if averaging 220+
+  if (average >= HANDICAP_BASE) return 0; // No handicap if averaging 215+
   return Math.round((HANDICAP_BASE - average) * HANDICAP_PERCENTAGE);
 }
 

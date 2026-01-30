@@ -74,7 +74,7 @@ This app is configured for deployment on Vercel:
 ## Handicap System
 
 The league uses a standard handicap formula:
-- **Handicap = 90% of (220 - average)**
+- **Handicap = 90% of (215 - average)**
 - This helps level the playing field between bowlers of different skill levels
 
 ## Prediction Game

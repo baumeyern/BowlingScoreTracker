@@ -96,7 +96,7 @@ When prompted, add your environment variables.
 - ✅ Score entry for 3 games per bowler per week
 - ✅ Edit historical weeks (backfill support)
 - ✅ Running average calculation
-- ✅ Handicap calculation (90% of 220)
+- ✅ Handicap calculation (90% of 215)
 - ✅ Series totals (scratch and with handicap)
 
 ### Prediction Mini-Game ✅

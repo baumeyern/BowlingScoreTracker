@@ -49,10 +49,10 @@ export function Settings() {
               <div>
                 <h3 className="font-semibold mb-2">Handicap Formula</h3>
                 <p className="text-sm text-muted-foreground">
-                  Handicap = 90% of (220 - average)
+                  Handicap = 90% of (215 - average)
                 </p>
                 <p className="text-xs text-muted-foreground mt-1">
-                  Example: If your average is 180, your handicap is (220 - 180) × 0.9 = 36
+                  Example: If your average is 180, your handicap is (215 - 180) × 0.9 = 31.5 = 32
                 </p>
               </div>
 
