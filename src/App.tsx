@@ -9,6 +9,7 @@ import { Predictions } from '@/pages/Predictions';
 import { Stats } from '@/pages/Stats';
 import { History } from '@/pages/History';
 import { Leaderboard } from '@/pages/Leaderboard';
+import { Settings } from '@/pages/Settings';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -34,6 +35,7 @@ function App() {
                 <Route path="/stats" element={<Stats />} />
                 <Route path="/history" element={<History />} />
                 <Route path="/leaderboard" element={<Leaderboard />} />
+                <Route path="/settings" element={<Settings />} />
               </Routes>
             </main>
           </div>

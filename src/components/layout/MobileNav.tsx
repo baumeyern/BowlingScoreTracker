@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { Menu, X } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Home, Edit, TrendingUp, BarChart3, History, Trophy } from 'lucide-react';
+import { Home, Edit, TrendingUp, BarChart3, History, Trophy, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
@@ -12,6 +12,7 @@ const navItems = [
   { to: '/stats', label: 'Stats', icon: BarChart3 },
   { to: '/history', label: 'History', icon: History },
   { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
+  { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
 interface MobileNavProps {
