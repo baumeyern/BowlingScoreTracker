@@ -13,7 +13,17 @@ export function useBowlerStats(bowlerId?: string) {
       const { data, error } = await query;
       
       if (error) throw error;
-      return data as BowlerStats[];
+      
+      // Map snake_case to camelCase
+      return data.map(stat => ({
+        bowlerId: stat.bowler_id,
+        totalGames: stat.total_games,
+        average: stat.average,
+        handicap: stat.handicap,
+        highGame: stat.high_game,
+        lowGame: stat.low_game,
+        totalPins: stat.total_pins,
+      })) as BowlerStats[];
     },
   });
 }
@@ -27,7 +37,17 @@ export function useAllBowlerStats() {
         .select('*');
       
       if (error) throw error;
-      return data as BowlerStats[];
+      
+      // Map snake_case to camelCase
+      return data.map(stat => ({
+        bowlerId: stat.bowler_id,
+        totalGames: stat.total_games,
+        average: stat.average,
+        handicap: stat.handicap,
+        highGame: stat.high_game,
+        lowGame: stat.low_game,
+        totalPins: stat.total_pins,
+      })) as BowlerStats[];
     },
   });
 }
