@@ -27,7 +27,7 @@ function BowlerForm({
   const [formData, setFormData] = useState<BowlerFormData>({
     name: bowler?.name || '',
     nickname: bowler?.nickname || '',
-    pinCode: bowler?.pinCode || '',
+    pinCode: '', // Always empty for privacy - only update if new value entered
     avatarColor: bowler?.avatarColor || '#3B82F6',
   });
 
@@ -44,9 +44,21 @@ function BowlerForm({
 
     try {
       if (bowler) {
+        // When editing, only update PIN if a new value was entered
+        const updates: Partial<Bowler> = {
+          name: formData.name,
+          nickname: formData.nickname || undefined,
+          avatarColor: formData.avatarColor,
+        };
+        
+        // Only update PIN if user entered a new one
+        if (formData.pinCode.trim()) {
+          updates.pinCode = formData.pinCode;
+        }
+        
         await updateBowler.mutateAsync({
           id: bowler.id,
-          updates: formData,
+          updates,
         });
         toast.success('Bowler updated!');
       } else {
@@ -87,13 +99,18 @@ function BowlerForm({
         <Label htmlFor="pinCode">PIN Code</Label>
         <Input
           id="pinCode"
-          type="text"
+          type="password"
           maxLength={4}
           value={formData.pinCode}
           onChange={(e) => setFormData({ ...formData, pinCode: e.target.value })}
-          placeholder="4-digit PIN (optional)"
+          placeholder={bowler ? "Leave blank to keep current PIN" : "4-digit PIN (optional)"}
+          autoComplete="new-password"
         />
-        <p className="text-xs text-muted-foreground">Optional 4-digit code for quick login</p>
+        <p className="text-xs text-muted-foreground">
+          {bowler 
+            ? "🔒 Enter a new PIN only if you want to change it" 
+            : "Optional 4-digit code for quick login"}
+        </p>
       </div>
 
       <div className="space-y-2">
@@ -194,7 +211,7 @@ export function BowlerManagement() {
                       <span className="text-muted-foreground">{bowler.avatarColor}</span>
                     </div>
                     {bowler.pinCode && (
-                      <span className="text-xs text-muted-foreground">• PIN: {bowler.pinCode}</span>
+                      <span className="text-xs text-muted-foreground">• PIN: ••••</span>
                     )}
                   </div>
                 </div>
