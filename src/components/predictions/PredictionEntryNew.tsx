@@ -3,6 +3,7 @@ import { useBowlers } from '@/hooks/useBowlers';
 import { usePredictions, useBatchUpsertPredictions } from '@/hooks/usePredictions';
 import { useWeeklySeries } from '@/hooks/useGames';
 import { useBowlerStats } from '@/hooks/useStats';
+import { useSelectedBowler } from '@/contexts/BowlerContext';
 import { PredictionCardNew } from './PredictionCardNew';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -17,11 +18,10 @@ interface PredictionEntryNewProps {
   weekId: string;
   weekNumber: number;
   predictionsLocked: boolean;
-  currentBowlerId?: string;
 }
 
-export function PredictionEntryNew({ weekId, weekNumber, predictionsLocked, currentBowlerId }: PredictionEntryNewProps) {
-  const [selectedBowlerId, setSelectedBowlerId] = useState(currentBowlerId || '');
+export function PredictionEntryNew({ weekId, weekNumber, predictionsLocked }: PredictionEntryNewProps) {
+  const { selectedBowlerId, setSelectedBowlerId } = useSelectedBowler();
   const { data: bowlers, isLoading: bowlersLoading } = useBowlers();
   const { data: existingPredictions, isLoading: predictionsLoading } = usePredictions(weekId, selectedBowlerId);
   const { data: weeklySeries } = useWeeklySeries();
@@ -30,12 +30,6 @@ export function PredictionEntryNew({ weekId, weekNumber, predictionsLocked, curr
 
   // State: { targetBowlerId: { 1: score, 2: score, 3: score } }
   const [predictions, setPredictions] = useState<Record<string, Record<1 | 2 | 3, number | null>>>({});
-
-  useEffect(() => {
-    if (!selectedBowlerId && bowlers && bowlers.length > 0) {
-      setSelectedBowlerId(bowlers[0].id);
-    }
-  }, [bowlers, selectedBowlerId]);
 
   useEffect(() => {
     if (bowlers && existingPredictions) {

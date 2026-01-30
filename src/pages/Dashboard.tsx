@@ -1,4 +1,3 @@
-import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useBowlers } from '@/hooks/useBowlers';
 import { useWeeks } from '@/hooks/useWeeks';
@@ -6,6 +5,7 @@ import { useBowlerStats } from '@/hooks/useStats';
 import { usePredictions } from '@/hooks/usePredictions';
 import { useWeeklySeries } from '@/hooks/useGames';
 import { usePredictionResults } from '@/hooks/usePredictions';
+import { useSelectedBowler } from '@/contexts/BowlerContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BowlerSelector } from '@/components/layout/BowlerSelector';
@@ -18,14 +18,7 @@ export function Dashboard() {
   const { data: weeks, isLoading: weeksLoading } = useWeeks();
   const { data: statsData } = useBowlerStats();
   const { data: allPredictionResults } = usePredictionResults();
-  
-  const [selectedBowlerId, setSelectedBowlerId] = useState<string>('');
-
-  useEffect(() => {
-    if (bowlers && bowlers.length > 0 && !selectedBowlerId) {
-      setSelectedBowlerId(bowlers[0].id);
-    }
-  }, [bowlers, selectedBowlerId]);
+  const { selectedBowlerId, setSelectedBowlerId } = useSelectedBowler();
 
   const currentWeek = weeks && weeks.length > 0 ? weeks[weeks.length - 1] : null;
   const { data: currentWeekPredictions } = usePredictions(currentWeek?.id, selectedBowlerId);
