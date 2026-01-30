@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useBowlers } from '@/hooks/useBowlers';
 import { useGames, useBatchUpsertGames } from '@/hooks/useGames';
+import { useDeleteGame } from '@/hooks/useDeleteGame';
 import { useBowlerStats } from '@/hooks/useStats';
 import { GameScoreInput } from './GameScoreInput';
 import { SeriesSummary } from './SeriesSummary';
@@ -21,9 +22,12 @@ export function WeeklyScoreEntry({ weekId }: WeeklyScoreEntryProps) {
   const { data: existingGames, isLoading: gamesLoading } = useGames(weekId);
   const { data: statsData } = useBowlerStats();
   const batchUpsert = useBatchUpsertGames();
+  const deleteGame = useDeleteGame();
 
   // State: { bowlerId: { 1: score, 2: score, 3: score } }
   const [scores, setScores] = useState<Record<string, Record<1 | 2 | 3, number | null>>>({});
+  // Track original scores to detect deletions
+  const [originalScores, setOriginalScores] = useState<Record<string, Record<1 | 2 | 3, number | null>>>({});
 
   // Initialize scores from existing games
   useEffect(() => {
@@ -38,6 +42,7 @@ export function WeeklyScoreEntry({ weekId }: WeeklyScoreEntryProps) {
           });
       });
       setScores(initialScores);
+      setOriginalScores(JSON.parse(JSON.stringify(initialScores))); // Deep copy
     }
   }, [bowlers, existingGames]);
 
@@ -53,33 +58,59 @@ export function WeeklyScoreEntry({ weekId }: WeeklyScoreEntryProps) {
 
   const handleSave = async () => {
     const gamesToUpsert: Omit<Game, 'id' | 'createdAt' | 'updatedAt'>[] = [];
+    const gamesToDelete: { weekId: string; bowlerId: string; gameNumber: 1 | 2 | 3 }[] = [];
+    let changesMade = false;
 
     Object.entries(scores).forEach(([bowlerId, bowlerScores]) => {
       ([1, 2, 3] as const).forEach(gameNumber => {
-        const score = bowlerScores[gameNumber];
-        if (score !== null) {
-          if (!isValidScore(score)) {
-            toast.error(`Invalid score for game ${gameNumber}: ${score}`);
+        const currentScore = bowlerScores[gameNumber];
+        const originalScore = originalScores[bowlerId]?.[gameNumber];
+        
+        // If score changed from something to null, delete it
+        if (originalScore !== null && currentScore === null) {
+          gamesToDelete.push({ weekId, bowlerId, gameNumber });
+          changesMade = true;
+        }
+        // If score has a value, upsert it
+        else if (currentScore !== null) {
+          if (!isValidScore(currentScore)) {
+            toast.error(`Invalid score for game ${gameNumber}: ${currentScore}`);
             return;
           }
           gamesToUpsert.push({
             weekId,
             bowlerId,
             gameNumber,
-            score,
+            score: currentScore,
           });
+          changesMade = true;
         }
       });
     });
 
-    if (gamesToUpsert.length === 0) {
-      toast.error('No scores to save');
+    if (!changesMade && gamesToUpsert.length === 0 && gamesToDelete.length === 0) {
+      toast.info('No changes to save');
       return;
     }
 
     try {
-      await batchUpsert.mutateAsync(gamesToUpsert);
-      toast.success(`Saved ${gamesToUpsert.length} scores!`);
+      // Delete cleared scores
+      if (gamesToDelete.length > 0) {
+        await Promise.all(
+          gamesToDelete.map(game => deleteGame.mutateAsync(game))
+        );
+      }
+      
+      // Upsert new/updated scores
+      if (gamesToUpsert.length > 0) {
+        await batchUpsert.mutateAsync(gamesToUpsert);
+      }
+      
+      const totalChanges = gamesToUpsert.length + gamesToDelete.length;
+      toast.success(`Saved ${totalChanges} change${totalChanges !== 1 ? 's' : ''}!`);
+      
+      // Update original scores to match current
+      setOriginalScores(JSON.parse(JSON.stringify(scores)));
     } catch (error) {
       console.error('Error saving scores:', error);
       toast.error('Failed to save scores');
