@@ -13,10 +13,10 @@ import type { Game } from '@/types';
 
 interface WeeklyScoreEntryProps {
   weekId: string;
-  weekNumber: number;
+  weekNumber?: number;
 }
 
-export function WeeklyScoreEntry({ weekId, weekNumber }: WeeklyScoreEntryProps) {
+export function WeeklyScoreEntry({ weekId }: WeeklyScoreEntryProps) {
   const { data: bowlers, isLoading: bowlersLoading } = useBowlers();
   const { data: existingGames, isLoading: gamesLoading } = useGames(weekId);
   const { data: statsData } = useBowlerStats();

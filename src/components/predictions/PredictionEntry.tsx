@@ -6,6 +6,7 @@ import { useBowlerStats } from '@/hooks/useStats';
 import { PredictionCard } from './PredictionCard';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
+import { Label } from '@/components/ui/label';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { BowlerSelector } from '@/components/layout/BowlerSelector';
 import { toast } from 'sonner';

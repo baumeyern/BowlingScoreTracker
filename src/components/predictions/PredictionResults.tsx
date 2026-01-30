@@ -4,7 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
 import { Target } from 'lucide-react';
-import { calculatePredictionPoints } from '@/lib/predictions';
+import { cn } from '@/lib/utils';
 
 interface PredictionResultsProps {
   weekId: string;

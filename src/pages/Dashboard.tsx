@@ -35,7 +35,6 @@ export function Dashboard() {
     return <LoadingSpinner />;
   }
 
-  const selectedBowler = bowlers?.find(b => b.id === selectedBowlerId);
   const selectedStats = statsData?.find(s => s.bowlerId === selectedBowlerId);
 
   // Check if current week needs predictions or scores
