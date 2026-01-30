@@ -31,7 +31,8 @@ export interface Prediction {
   weekId: string;
   predictorId: string;
   targetId: string;
-  predictedSeries: number;
+  gameNumber: 1 | 2 | 3;
+  predictedScore: number;
   createdAt: string;
   updatedAt: string;
 }
@@ -60,8 +61,9 @@ export interface PredictionResult {
   weekId: string;
   weekNumber: number;
   targetId: string;
-  predictedSeries: number;
-  actualSeries: number | null;
+  gameNumber: 1 | 2 | 3;
+  predictedScore: number;
+  actualScore: number | null;
   difference: number | null;
   points: number | null;
 }

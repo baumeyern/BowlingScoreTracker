@@ -29,8 +29,8 @@ export function MobileNav({ className }: MobileNavProps) {
       </Button>
 
       {open && (
-        <div className="fixed inset-0 top-16 z-50 bg-background/80 backdrop-blur-sm">
-          <nav className="container py-6">
+        <div className="fixed inset-0 top-16 z-50 bg-background backdrop-blur-sm">
+          <nav className="container py-6 bg-background border-t">
             <div className="flex flex-col gap-4">
               {navItems.map((item) => (
                 <NavLink

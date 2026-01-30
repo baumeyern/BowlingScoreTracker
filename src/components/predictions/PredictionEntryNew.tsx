@@ -3,24 +3,24 @@ import { useBowlers } from '@/hooks/useBowlers';
 import { usePredictions, useBatchUpsertPredictions } from '@/hooks/usePredictions';
 import { useWeeklySeries } from '@/hooks/useGames';
 import { useBowlerStats } from '@/hooks/useStats';
-import { PredictionCard } from './PredictionCard';
+import { PredictionCardNew } from './PredictionCardNew';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { BowlerSelector } from '@/components/layout/BowlerSelector';
 import { toast } from 'sonner';
-import { isValidSeriesPrediction } from '@/lib/utils';
+import { isValidScore } from '@/lib/utils';
 import type { Prediction } from '@/types';
 
-interface PredictionEntryProps {
+interface PredictionEntryNewProps {
   weekId: string;
   weekNumber: number;
   predictionsLocked: boolean;
   currentBowlerId?: string;
 }
 
-export function PredictionEntry({ weekId, weekNumber, predictionsLocked, currentBowlerId }: PredictionEntryProps) {
+export function PredictionEntryNew({ weekId, weekNumber, predictionsLocked, currentBowlerId }: PredictionEntryNewProps) {
   const [selectedBowlerId, setSelectedBowlerId] = useState(currentBowlerId || '');
   const { data: bowlers, isLoading: bowlersLoading } = useBowlers();
   const { data: existingPredictions, isLoading: predictionsLoading } = usePredictions(weekId, selectedBowlerId);
@@ -28,34 +28,39 @@ export function PredictionEntry({ weekId, weekNumber, predictionsLocked, current
   const { data: statsData } = useBowlerStats();
   const batchUpsert = useBatchUpsertPredictions();
 
-  // State: { targetBowlerId: predictedSeries }
-  const [predictions, setPredictions] = useState<Record<string, number | null>>({});
+  // State: { targetBowlerId: { 1: score, 2: score, 3: score } }
+  const [predictions, setPredictions] = useState<Record<string, Record<1 | 2 | 3, number | null>>>({});
 
-  // Set initial bowler if not set
   useEffect(() => {
     if (!selectedBowlerId && bowlers && bowlers.length > 0) {
       setSelectedBowlerId(bowlers[0].id);
     }
   }, [bowlers, selectedBowlerId]);
 
-  // Initialize predictions from existing data
   useEffect(() => {
     if (bowlers && existingPredictions) {
-      const initialPredictions: Record<string, number | null> = {};
+      const initialPredictions: Record<string, Record<1 | 2 | 3, number | null>> = {};
       bowlers.forEach(bowler => {
         if (bowler.id !== selectedBowlerId) {
-          const existing = existingPredictions.find(p => p.targetId === bowler.id);
-          initialPredictions[bowler.id] = existing?.predictedSeries ?? null;
+          initialPredictions[bowler.id] = { 1: null, 2: null, 3: null };
+          existingPredictions
+            .filter(p => p.targetId === bowler.id)
+            .forEach(p => {
+              initialPredictions[bowler.id][p.gameNumber] = p.predictedScore;
+            });
         }
       });
       setPredictions(initialPredictions);
     }
   }, [bowlers, existingPredictions, selectedBowlerId]);
 
-  const handlePredictionChange = (targetBowlerId: string, value: number | null) => {
+  const handlePredictionChange = (targetBowlerId: string, gameNumber: 1 | 2 | 3, value: number | null) => {
     setPredictions(prev => ({
       ...prev,
-      [targetBowlerId]: value,
+      [targetBowlerId]: {
+        ...prev[targetBowlerId],
+        [gameNumber]: value,
+      },
     }));
   };
 
@@ -67,19 +72,24 @@ export function PredictionEntry({ weekId, weekNumber, predictionsLocked, current
 
     const predictionsToUpsert: Omit<Prediction, 'id' | 'createdAt' | 'updatedAt'>[] = [];
 
-    Object.entries(predictions).forEach(([targetId, predictedSeries]) => {
-      if (predictedSeries !== null) {
-        if (!isValidSeriesPrediction(predictedSeries)) {
-          toast.error(`Invalid prediction for ${bowlers?.find(b => b.id === targetId)?.name}: ${predictedSeries}`);
-          return;
+    Object.entries(predictions).forEach(([targetId, games]) => {
+      ([1, 2, 3] as const).forEach(gameNumber => {
+        const predictedScore = games[gameNumber];
+        if (predictedScore !== null) {
+          if (!isValidScore(predictedScore)) {
+            const targetName = bowlers?.find(b => b.id === targetId)?.name;
+            toast.error(`Invalid prediction for ${targetName} game ${gameNumber}: ${predictedScore}`);
+            return;
+          }
+          predictionsToUpsert.push({
+            weekId,
+            predictorId: selectedBowlerId,
+            targetId,
+            gameNumber,
+            predictedScore,
+          });
         }
-        predictionsToUpsert.push({
-          weekId,
-          predictorId: selectedBowlerId,
-          targetId,
-          predictedSeries,
-        });
-      }
+      });
     });
 
     if (predictionsToUpsert.length === 0) {
@@ -117,16 +127,16 @@ export function PredictionEntry({ weekId, weekNumber, predictionsLocked, current
     <div className="space-y-6">
       <Card>
         <CardContent className="p-4">
-          <div className="flex items-center justify-between">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
             <Label className="text-sm font-medium">You are:</Label>
             <BowlerSelector
               value={selectedBowlerId}
               onChange={setSelectedBowlerId}
-              className="w-48"
+              className="w-full sm:w-48"
             />
           </div>
           {predictionsLocked && (
-            <p className="text-sm text-amber-600 mt-2 flex items-center gap-2">
+            <p className="text-sm text-amber-600 mt-3 flex items-center gap-2">
               🔒 Predictions are locked for this week
             </p>
           )}
@@ -139,16 +149,21 @@ export function PredictionEntry({ weekId, weekNumber, predictionsLocked, current
           const lastWeekData = weeklySeries?.find(
             s => s.bowlerId === bowler.id && s.weekNumber === lastWeekNumber
           );
+          const bowlerPredictions = predictions[bowler.id] || { 1: null, 2: null, 3: null };
 
           return (
-            <PredictionCard
+            <PredictionCardNew
               key={bowler.id}
               targetBowler={bowler}
-              value={predictions[bowler.id] ?? null}
-              onChange={(v) => handlePredictionChange(bowler.id, v)}
+              game1={bowlerPredictions[1]}
+              game2={bowlerPredictions[2]}
+              game3={bowlerPredictions[3]}
+              onGame1Change={(v) => handlePredictionChange(bowler.id, 1, v)}
+              onGame2Change={(v) => handlePredictionChange(bowler.id, 2, v)}
+              onGame3Change={(v) => handlePredictionChange(bowler.id, 3, v)}
               disabled={predictionsLocked}
               average={stats?.average}
-              lastWeekSeries={lastWeekData?.seriesTotal}
+              lastWeekScores={lastWeekData?.gameScores as [number, number, number] | undefined}
             />
           );
         })}

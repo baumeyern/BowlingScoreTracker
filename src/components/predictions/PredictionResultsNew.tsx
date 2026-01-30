@@ -6,12 +6,11 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { Target } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
-interface PredictionResultsProps {
+interface PredictionResultsNewProps {
   weekId: string;
-  weekNumber: number;
 }
 
-export function PredictionResults({ weekId }: PredictionResultsProps) {
+export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
   const { data: bowlers } = useBowlers();
   const { data: results, isLoading } = usePredictionResults(weekId);
 
@@ -45,7 +44,16 @@ export function PredictionResults({ weekId }: PredictionResultsProps) {
         if (!predictor) return null;
 
         const totalPoints = predictorResults.reduce((sum, r) => sum + (r.points || 0), 0);
-        const hasActuals = predictorResults.some(r => r.actualSeries !== null);
+        const hasActuals = predictorResults.some(r => r.actualScore !== null);
+
+        // Group by target for display
+        const byTarget = predictorResults.reduce((acc, result) => {
+          if (!acc[result.targetId]) {
+            acc[result.targetId] = [];
+          }
+          acc[result.targetId].push(result);
+          return acc;
+        }, {} as Record<string, typeof results>);
 
         return (
           <Card key={predictorId}>
@@ -62,78 +70,77 @@ export function PredictionResults({ weekId }: PredictionResultsProps) {
                 </div>
                 {hasActuals && (
                   <div className="text-right">
-                    <p className="text-sm text-muted-foreground">Points</p>
+                    <p className="text-sm text-muted-foreground">Total Points</p>
                     <p className="text-2xl font-bold text-primary">+{totalPoints}</p>
                   </div>
                 )}
               </div>
             </CardHeader>
             <CardContent>
-              <div className="space-y-3">
-                {predictorResults.map(result => {
-                  const target = bowlers?.find(b => b.id === result.targetId);
+              <div className="space-y-4">
+                {Object.entries(byTarget).map(([targetId, targetResults]) => {
+                  const target = bowlers?.find(b => b.id === targetId);
                   if (!target) return null;
 
-                  const hasActual = result.actualSeries !== null;
-                  const isExact = result.difference === 0;
+                  // Sort by game number
+                  const sortedResults = [...targetResults].sort((a, b) => a.gameNumber - b.gameNumber);
+                  const gamePoints = sortedResults.reduce((sum, r) => sum + (r.points || 0), 0);
 
                   return (
-                    <div
-                      key={result.targetId}
-                      className={cn(
-                        'flex items-center justify-between p-3 rounded-md border',
-                        isExact && 'border-amber-500 bg-amber-50 dark:bg-amber-950/20'
-                      )}
-                    >
-                      <div className="flex items-center gap-3 flex-1">
+                    <div key={targetId} className="border rounded-lg p-3">
+                      <div className="flex items-center gap-2 mb-3">
                         <div
                           className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
                           style={{ backgroundColor: target.avatarColor }}
                         >
                           {target.name.charAt(0)}
                         </div>
-                        <div>
+                        <div className="flex-1">
                           <p className="font-medium">{target.name}</p>
-                          <div className="flex items-center gap-2 text-sm">
-                            <span className="text-muted-foreground">
-                              Predicted: <span className="font-semibold">{result.predictedSeries}</span>
-                            </span>
-                            {hasActual && (
-                              <>
-                                <span className="text-muted-foreground">→</span>
-                                <span className="text-muted-foreground">
-                                  Actual: <span className="font-semibold">{result.actualSeries}</span>
-                                </span>
-                              </>
-                            )}
-                          </div>
                         </div>
+                        {hasActuals && (
+                          <div className="text-right">
+                            <p className="text-sm font-bold text-primary">{gamePoints} pts</p>
+                          </div>
+                        )}
                       </div>
 
-                      {hasActual && result.difference !== null && (
-                        <div className="text-right">
-                          <div className="flex items-center gap-2">
-                            <div>
-                              <p className={cn(
-                                'text-sm font-medium',
-                                isExact ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
-                              )}>
-                                {isExact ? 'EXACT!' : `${result.difference} off`}
-                              </p>
-                              <p className="text-lg font-bold text-primary">
-                                {result.points} pts
-                              </p>
-                            </div>
-                            {isExact && <span className="text-2xl">🎯</span>}
-                          </div>
-                        </div>
-                      )}
+                      <div className="grid grid-cols-3 gap-2">
+                        {sortedResults.map(result => {
+                          const hasActual = result.actualScore !== null;
+                          const isExact = result.difference === 0;
 
-                      {!hasActual && (
-                        <div className="text-sm text-muted-foreground">
-                          Waiting for scores...
-                        </div>
-                      )}
+                          return (
+                            <div
+                              key={result.gameNumber}
+                              className={cn(
+                                'p-2 rounded border text-center',
+                                isExact && 'border-amber-500 bg-amber-50 dark:bg-amber-950/20'
+                              )}
+                            >
+                              <p className="text-xs text-muted-foreground mb-1">Game {result.gameNumber}</p>
+                              <div className="text-sm">
+                                <p className="font-semibold">Pred: {result.predictedScore}</p>
+                                {hasActual && (
+                                  <>
+                                    <p className="text-muted-foreground">Act: {result.actualScore}</p>
+                                    <p className={cn(
+                                      'text-xs font-medium mt-1',
+                                      isExact ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
+                                    )}>
+                                      {isExact ? '🎯 Exact!' : `${result.difference} off`}
+                                    </p>
+                                    <p className="text-sm font-bold text-primary">{result.points} pts</p>
+                                  </>
+                                )}
+                                {!hasActual && (
+                                  <p className="text-xs text-muted-foreground mt-1">Waiting...</p>
+                                )}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
                     </div>
                   );
                 })}
@@ -144,7 +151,7 @@ export function PredictionResults({ weekId }: PredictionResultsProps) {
       })}
 
       {/* Best predictor for this week */}
-      {results.some(r => r.actualSeries !== null) && (
+      {results.some(r => r.actualScore !== null) && (
         <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
           <CardContent className="p-6">
             {(() => {

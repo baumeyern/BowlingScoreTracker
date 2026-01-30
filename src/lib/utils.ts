@@ -15,6 +15,6 @@ export function isValidScore(score: number): boolean {
   return score >= 0 && score <= 300;
 }
 
-export function isValidSeriesPrediction(prediction: number): boolean {
-  return prediction >= 0 && prediction <= 900;
+export function isValidGamePrediction(prediction: number): boolean {
+  return prediction >= 0 && prediction <= 300;
 }

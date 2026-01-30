@@ -7,7 +7,7 @@
  *   - Handicap score for a 175 game = 175 + 36 = 211
  */
 
-export const HANDICAP_BASE = 220;
+export const HANDICAP_BASE = 215;
 export const HANDICAP_PERCENTAGE = 0.9;
 
 export function calculateHandicap(average: number): number {

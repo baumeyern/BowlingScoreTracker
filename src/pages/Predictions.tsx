@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useWeeks } from '@/hooks/useWeeks';
-import { PredictionEntry } from '@/components/predictions/PredictionEntry';
-import { PredictionResults } from '@/components/predictions/PredictionResults';
+import { PredictionEntryNew } from '@/components/predictions/PredictionEntryNew';
+import { PredictionResultsNew } from '@/components/predictions/PredictionResultsNew';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -76,7 +76,7 @@ export function Predictions() {
           </TabsList>
           
           <TabsContent value="entry" className="mt-6">
-            <PredictionEntry
+            <PredictionEntryNew
               weekId={selectedWeek.id}
               weekNumber={selectedWeek.weekNumber}
               predictionsLocked={selectedWeek.predictionsLocked}
@@ -84,9 +84,8 @@ export function Predictions() {
           </TabsContent>
           
           <TabsContent value="results" className="mt-6">
-            <PredictionResults
+            <PredictionResultsNew
               weekId={selectedWeek.id}
-              weekNumber={selectedWeek.weekNumber}
             />
           </TabsContent>
         </Tabs>

@@ -38,7 +38,8 @@ export function Dashboard() {
   const selectedStats = statsData?.find(s => s.bowlerId === selectedBowlerId);
 
   // Check if current week needs predictions or scores
-  const needsPredictions = currentWeek && (!currentWeekPredictions || currentWeekPredictions.length < 3);
+  // Need 9 predictions: 3 games for each of 3 teammates
+  const needsPredictions = currentWeek && (!currentWeekPredictions || currentWeekPredictions.length < 9);
   const needsScores = currentWeek && (!currentWeekSeries || currentWeekSeries.filter(s => s.bowlerId === selectedBowlerId).length === 0);
 
   // Calculate prediction leaderboard
@@ -58,21 +59,20 @@ export function Dashboard() {
 
   return (
     <div className="container mx-auto p-4 space-y-6 max-w-6xl">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold">Team Dashboard</h1>
-          {currentWeek && (
-            <p className="text-muted-foreground">
-              Week {currentWeek.weekNumber} {currentWeek.bowlingDate && `• ${new Date(currentWeek.bowlingDate).toLocaleDateString()}`}
-            </p>
-          )}
-        </div>
-        <BowlerSelector
-          value={selectedBowlerId}
-          onChange={setSelectedBowlerId}
-          className="w-48"
-        />
+      <div>
+        <h1 className="text-3xl font-bold">Team Dashboard</h1>
+        {currentWeek && (
+          <p className="text-muted-foreground">
+            Week {currentWeek.weekNumber} {currentWeek.bowlingDate && `• ${new Date(currentWeek.bowlingDate).toLocaleDateString()}`}
+          </p>
+        )}
       </div>
+      
+      <BowlerSelector
+        value={selectedBowlerId}
+        onChange={setSelectedBowlerId}
+        label="Select Your Profile"
+      />
 
       {/* Personal Stats */}
       {selectedStats && (

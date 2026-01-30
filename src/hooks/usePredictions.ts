@@ -21,7 +21,8 @@ export function usePredictions(weekId?: string, predictorId?: string) {
         weekId: pred.week_id,
         predictorId: pred.predictor_id,
         targetId: pred.target_id,
-        predictedSeries: pred.predicted_series,
+        gameNumber: pred.game_number,
+        predictedScore: pred.predicted_score,
         createdAt: pred.created_at,
         updatedAt: pred.updated_at,
       })) as Prediction[];
@@ -49,8 +50,9 @@ export function usePredictionResults(weekId?: string) {
         weekId: result.week_id,
         weekNumber: result.week_number,
         targetId: result.target_id,
-        predictedSeries: result.predicted_series,
-        actualSeries: result.actual_series,
+        gameNumber: result.game_number,
+        predictedScore: result.predicted_score,
+        actualScore: result.actual_score,
         difference: result.difference,
         points: result.points,
       })) as PredictionResult[];
@@ -68,7 +70,8 @@ export function useUpsertPrediction() {
         week_id: prediction.weekId,
         predictor_id: prediction.predictorId,
         target_id: prediction.targetId,
-        predicted_series: prediction.predictedSeries,
+        game_number: prediction.gameNumber,
+        predicted_score: prediction.predictedScore,
       };
       
       const { data, error } = await supabase
@@ -90,7 +93,8 @@ export function useUpsertPrediction() {
         weekId: data.week_id,
         predictorId: data.predictor_id,
         targetId: data.target_id,
-        predictedSeries: data.predicted_series,
+        gameNumber: data.game_number,
+        predictedScore: data.predicted_score,
         createdAt: data.created_at,
         updatedAt: data.updated_at,
       } as Prediction;
@@ -114,7 +118,8 @@ export function useBatchUpsertPredictions() {
         week_id: pred.weekId,
         predictor_id: pred.predictorId,
         target_id: pred.targetId,
-        predicted_series: pred.predictedSeries,
+        game_number: pred.gameNumber,
+        predicted_score: pred.predictedScore,
       }));
       
       const { data, error } = await supabase
@@ -135,7 +140,8 @@ export function useBatchUpsertPredictions() {
         weekId: pred.week_id,
         predictorId: pred.predictor_id,
         targetId: pred.target_id,
-        predictedSeries: pred.predicted_series,
+        gameNumber: pred.game_number,
+        predictedScore: pred.predicted_score,
         createdAt: pred.created_at,
         updatedAt: pred.updated_at,
       })) as Prediction[];

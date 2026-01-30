@@ -19,17 +19,20 @@ export function calculatePredictionPoints(difference: number): number {
 }
 
 export function calculateWeeklyPredictionResults(
-  predictions: { predictorId: string; targetId: string; predicted: number }[],
-  actuals: { bowlerId: string; series: number }[]
+  predictions: { predictorId: string; targetId: string; gameNumber: 1 | 2 | 3; predicted: number }[],
+  actuals: { bowlerId: string; gameNumber: 1 | 2 | 3; score: number }[]
 ): Omit<PredictionResult, 'weekId' | 'weekNumber'>[] {
   return predictions.map(pred => {
-    const actual = actuals.find(a => a.bowlerId === pred.targetId)?.series ?? null;
+    const actual = actuals.find(
+      a => a.bowlerId === pred.targetId && a.gameNumber === pred.gameNumber
+    )?.score ?? null;
     const difference = actual !== null ? Math.abs(pred.predicted - actual) : null;
     return {
       predictorId: pred.predictorId,
       targetId: pred.targetId,
-      predictedSeries: pred.predicted,
-      actualSeries: actual,
+      gameNumber: pred.gameNumber,
+      predictedScore: pred.predicted,
+      actualScore: actual,
       difference,
       points: difference !== null ? calculatePredictionPoints(difference) : null
     };
