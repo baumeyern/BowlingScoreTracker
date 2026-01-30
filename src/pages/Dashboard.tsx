@@ -169,17 +169,17 @@ export function Dashboard() {
               const percentage = (standing.average / 220) * 100; // Max average of 220
               return (
                 <div key={standing.bowlerId} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm">
-                    <div className="flex items-center gap-2">
-                      <span className="font-semibold w-6">{index + 1}.</span>
+                  <div className="flex items-center justify-between text-sm gap-3">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <span className="font-semibold w-6 flex-shrink-0">{index + 1}.</span>
                       <div
-                        className="h-6 w-6 rounded-full"
+                        className="h-6 w-6 rounded-full flex-shrink-0"
                         style={{ backgroundColor: standing.bowler?.avatarColor }}
                       />
-                      <span className="font-medium">{standing.bowler?.name}</span>
-                      {index === 0 && <span className="text-lg">🔥</span>}
+                      <span className="font-medium flex-1 min-w-0">{standing.bowler?.name}</span>
+                      {index === 0 && <span className="text-lg flex-shrink-0">🔥</span>}
                     </div>
-                    <span className="font-bold">{standing.average.toFixed(1)}</span>
+                    <span className="font-bold flex-shrink-0 ml-2">{standing.average.toFixed(1)}</span>
                   </div>
                   <div className="w-full bg-muted rounded-full h-2">
                     <div
