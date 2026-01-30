@@ -163,13 +163,13 @@ export function Dashboard() {
               return (
                 <div key={standing.bowlerId} className="space-y-1">
                   <div className="flex items-center justify-between text-sm gap-3">
-                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-1">
                       <span className="font-semibold w-6 flex-shrink-0">{index + 1}.</span>
                       <div
                         className="h-6 w-6 rounded-full flex-shrink-0"
                         style={{ backgroundColor: standing.bowler?.avatarColor }}
                       />
-                      <span className="font-medium flex-1 min-w-0">{standing.bowler?.name}</span>
+                      <span className="font-medium">{standing.bowler?.name}</span>
                       {index === 0 && <span className="text-lg flex-shrink-0">🔥</span>}
                     </div>
                     <span className="font-bold flex-shrink-0 ml-2">{standing.average.toFixed(1)}</span>

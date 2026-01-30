@@ -31,27 +31,27 @@ export function PredictionCardNew({
   return (
     <Card>
       <CardContent className="p-4">
-        <div className="flex items-center justify-between mb-4">
-          <div className="flex items-center gap-3">
+        <div className="flex items-start justify-between mb-4 gap-3">
+          <div className="flex items-center gap-3 flex-1">
             <div
-              className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold"
+              className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
               style={{ backgroundColor: targetBowler.avatarColor }}
             >
               {targetBowler.name.charAt(0)}
             </div>
-            <div>
-              <Label className="text-base font-semibold">{targetBowler.name}</Label>
+            <div className="flex-1">
+              <Label className="text-base font-semibold break-words">{targetBowler.name}</Label>
               {targetBowler.nickname && (
-                <p className="text-xs text-muted-foreground">{targetBowler.nickname}</p>
+                <p className="text-xs text-muted-foreground break-words">{targetBowler.nickname}</p>
               )}
             </div>
           </div>
-          <div className="text-right text-sm">
+          <div className="text-right text-sm flex-shrink-0">
             {average !== undefined && (
-              <p className="text-muted-foreground">Avg: <span className="font-semibold">{average.toFixed(1)}</span></p>
+              <p className="text-muted-foreground whitespace-nowrap">Avg: <span className="font-semibold">{average.toFixed(1)}</span></p>
             )}
             {lastWeekScores && (
-              <p className="text-xs text-muted-foreground">
+              <p className="text-xs text-muted-foreground whitespace-nowrap">
                 Last: {lastWeekScores[0]}, {lastWeekScores[1]}, {lastWeekScores[2]}
               </p>
             )}
