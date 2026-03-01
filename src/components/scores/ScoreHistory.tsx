@@ -53,9 +53,9 @@ export function ScoreHistory() {
                       <th className="text-center py-2 px-2">Game 1</th>
                       <th className="text-center py-2 px-2">Game 2</th>
                       <th className="text-center py-2 px-2">Game 3</th>
+                      <th className="text-center py-2 px-2">Avg</th>
                       <th className="text-center py-2 px-2">Series</th>
                       <th className="text-center py-2 px-2">HC</th>
-                      <th className="text-center py-2 px-2">Avg</th>
                       <th className="text-center py-2 px-2">Total</th>
                     </tr>
                   </thead>
@@ -69,7 +69,7 @@ export function ScoreHistory() {
                         <tr key={bowler.id} className="border-b last:border-0">
                           <td className="py-3 px-2">
                             <div className="flex items-center gap-2">
-                              <BowlerAvatar bowler={bowler} size="xs" />
+                              <BowlerAvatar bowler={bowler} size="xxs" />
                               <span className="font-medium">{bowler.name}</span>
                             </div>
                           </td>
@@ -83,13 +83,13 @@ export function ScoreHistory() {
                             {series?.gameScores[2] || '-'}
                           </td>
                           <td className="text-center py-3 px-2 font-semibold">
+                            {series ? Math.round(series.seriesTotal / series.gamesEntered) : '-'}
+                          </td>
+                          <td className="text-center py-3 px-2 font-semibold">
                             {series?.seriesTotal || '-'}
                           </td>
                           <td className="text-center py-3 px-2 text-sm text-muted-foreground">
                             +{handicap * (series?.gamesEntered || 0)}
-                          </td>
-                          <td className="text-center py-3 px-2 font-semibold">
-                            {series ? Math.round(series.seriesTotal / series.gamesEntered) : '-'}
                           </td>
                           <td className="text-center py-3 px-2 font-bold text-primary">
                             {series ? series.seriesTotal + (handicap * series.gamesEntered) : '-'}
