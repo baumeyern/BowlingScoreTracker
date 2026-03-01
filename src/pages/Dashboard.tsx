@@ -15,6 +15,7 @@ import { BowlerSelector } from '@/components/layout/BowlerSelector';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { calculatePredictionLeaderboard } from '@/lib/predictions';
 import { AlertCircle, Edit, TrendingUp, BarChart3 } from 'lucide-react';
+import { formatDate } from '@/lib/utils';
 
 export function Dashboard() {
   const { data: bowlers, isLoading: bowlersLoading } = useBowlers();
@@ -64,7 +65,7 @@ export function Dashboard() {
         <p className="text-muted-foreground">
           {selectedLeague ? selectedLeague.name : 'No league selected'}
           {currentWeek && ` — Week ${currentWeek.weekNumber}`}
-          {currentWeek?.bowlingDate && ` • ${new Date(currentWeek.bowlingDate).toLocaleDateString()}`}
+          {currentWeek?.bowlingDate && ` • ${formatDate(currentWeek.bowlingDate)}`}
         </p>
       </div>
 
