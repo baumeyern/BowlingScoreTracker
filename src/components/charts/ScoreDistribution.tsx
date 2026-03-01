@@ -92,7 +92,7 @@ export function ScoreDistribution() {
       </CardHeader>
       <CardContent className="px-2 sm:px-6 pb-4 sm:pb-6">
         <ResponsiveContainer width="100%" height={250}>
-          <BarChart data={chartData} margin={{ left: -15, right: 5, top: 10, bottom: 5 }}>
+          <BarChart data={chartData} margin={{ left: 0, right: 5, top: 10, bottom: 5 }}>
             <defs>
               <linearGradient id="barGrad" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="0%" stopColor={baseColor} stopOpacity={0.9} />
@@ -101,7 +101,7 @@ export function ScoreDistribution() {
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(230 20% 18%)" vertical={false} />
             <XAxis dataKey="range" tick={{ fontSize: 10, fill: 'hsl(215 20% 55%)' }} interval={0} angle={-35} textAnchor="end" height={50} axisLine={{ stroke: 'hsl(230 20% 18%)' }} tickLine={false} />
-            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} width={25} axisLine={false} tickLine={false} />
+            <YAxis allowDecimals={false} tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} width={35} axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} cursor={{ fill: 'hsl(230 20% 14% / 0.5)' }} />
             <Bar dataKey="count" radius={[6, 6, 0, 0]}>
               {chartData.map((entry, index) => (

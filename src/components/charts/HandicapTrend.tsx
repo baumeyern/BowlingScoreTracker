@@ -92,7 +92,7 @@ export function HandicapTrend() {
       </CardHeader>
       <CardContent className="px-2 sm:px-6 pb-4 sm:pb-6">
         <ResponsiveContainer width="100%" height={250}>
-          <AreaChart data={chartData} margin={{ left: -15, right: 5, top: 10, bottom: 5 }}>
+          <AreaChart data={chartData} margin={{ left: 0, right: 5, top: 10, bottom: 5 }}>
             <defs>
               {bowlers?.map(bowler => (
                 <linearGradient key={bowler.id} id={`grad-hc-${bowler.id}`} x1="0" y1="0" x2="0" y2="1">
@@ -103,7 +103,7 @@ export function HandicapTrend() {
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="hsl(230 20% 18%)" />
             <XAxis dataKey="week" tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} axisLine={{ stroke: 'hsl(230 20% 18%)' }} tickLine={false} />
-            <YAxis tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} width={35} axisLine={false} tickLine={false} />
+            <YAxis tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} width={45} axisLine={false} tickLine={false} />
             <Tooltip content={<CustomTooltip />} />
             {bowlers?.map(bowler => (
               <Area

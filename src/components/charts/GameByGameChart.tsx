@@ -86,7 +86,7 @@ export function GameByGameChart() {
           <p className="text-center text-muted-foreground py-8">No games recorded yet</p>
         ) : (
           <ResponsiveContainer width="100%" height={250}>
-            <AreaChart data={chartData} margin={{ left: -15, right: 5, top: 10, bottom: 5 }}>
+            <AreaChart data={chartData} margin={{ left: 0, right: 5, top: 10, bottom: 5 }}>
               <defs>
                 {selectedBowlerId === 'all' ? (
                   bowlers?.map(bowler => (
@@ -104,7 +104,7 @@ export function GameByGameChart() {
               </defs>
               <CartesianGrid strokeDasharray="3 3" stroke="hsl(230 20% 18%)" />
               <XAxis dataKey="gameIndex" tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} axisLine={{ stroke: 'hsl(230 20% 18%)' }} tickLine={false} />
-              <YAxis domain={[0, 300]} tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} width={35} axisLine={false} tickLine={false} />
+              <YAxis domain={[0, 300]} tick={{ fontSize: 11, fill: 'hsl(215 20% 55%)' }} width={45} axisLine={false} tickLine={false} />
               <Tooltip content={<CustomTooltip />} />
               <ReferenceLine y={200} stroke="hsl(215 20% 30%)" strokeDasharray="6 4" label={{ value: '200', position: 'right', fill: 'hsl(215 20% 40%)', fontSize: 10 }} />
               {selectedBowlerId === 'all' ? (
