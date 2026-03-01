@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useLeagues, useCreateLeague, useUpdateLeague } from '@/hooks/useLeagues';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -7,16 +7,35 @@ import { Label } from '@/components/ui/label';
 import { Switch } from '@/components/ui/switch';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { Plus, Trophy, Circle, CheckCircle } from 'lucide-react';
+import { Plus, Trophy, Circle, CheckCircle, Pencil } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDate } from '@/lib/utils';
 import type { League } from '@/types';
 
-function CreateLeagueForm({ onSuccess }: { onSuccess: () => void }) {
+function LeagueForm({
+  league,
+  onSuccess,
+}: {
+  league?: League;
+  onSuccess: () => void;
+}) {
   const createLeague = useCreateLeague();
-  const [name, setName] = useState('');
-  const [startDate, setStartDate] = useState('');
-  const [endDate, setEndDate] = useState('');
+  const updateLeague = useUpdateLeague();
+  const isEditing = !!league;
+
+  const [name, setName] = useState(league?.name || '');
+  const [startDate, setStartDate] = useState(league?.startDate || '');
+  const [endDate, setEndDate] = useState(league?.endDate || '');
+
+  useEffect(() => {
+    if (league) {
+      setName(league.name);
+      setStartDate(league.startDate || '');
+      setEndDate(league.endDate || '');
+    }
+  }, [league]);
+
+  const isPending = createLeague.isPending || updateLeague.isPending;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -26,20 +45,32 @@ function CreateLeagueForm({ onSuccess }: { onSuccess: () => void }) {
     }
 
     try {
-      await createLeague.mutateAsync({
-        name: name.trim(),
-        startDate: startDate || undefined,
-        endDate: endDate || undefined,
-        isActive: true,
-      });
-      toast.success(`League "${name}" created!`);
+      if (isEditing) {
+        await updateLeague.mutateAsync({
+          id: league.id,
+          updates: {
+            name: name.trim(),
+            startDate: startDate || undefined,
+            endDate: endDate || undefined,
+          },
+        });
+        toast.success(`League "${name}" updated!`);
+      } else {
+        await createLeague.mutateAsync({
+          name: name.trim(),
+          startDate: startDate || undefined,
+          endDate: endDate || undefined,
+          isActive: true,
+        });
+        toast.success(`League "${name}" created!`);
+        setName('');
+        setStartDate('');
+        setEndDate('');
+      }
       onSuccess();
-      setName('');
-      setStartDate('');
-      setEndDate('');
     } catch (error) {
-      console.error('Error creating league:', error);
-      toast.error('Failed to create league');
+      console.error('Error saving league:', error);
+      toast.error(`Failed to ${isEditing ? 'update' : 'create'} league`);
     }
   };
 
@@ -76,8 +107,8 @@ function CreateLeagueForm({ onSuccess }: { onSuccess: () => void }) {
         />
       </div>
 
-      <Button type="submit" disabled={createLeague.isPending} className="w-full">
-        {createLeague.isPending ? 'Creating...' : 'Create League'}
+      <Button type="submit" disabled={isPending} className="w-full">
+        {isPending ? 'Saving...' : isEditing ? 'Save Changes' : 'Create League'}
       </Button>
     </form>
   );
@@ -87,6 +118,7 @@ export function LeagueManagement() {
   const { data: leagues, isLoading } = useLeagues();
   const updateLeague = useUpdateLeague();
   const [isCreateOpen, setIsCreateOpen] = useState(false);
+  const [editingLeague, setEditingLeague] = useState<League | null>(null);
 
   const handleToggleActive = async (league: League) => {
     try {
@@ -121,7 +153,7 @@ export function LeagueManagement() {
               <DialogHeader>
                 <DialogTitle>Create New League</DialogTitle>
               </DialogHeader>
-              <CreateLeagueForm onSuccess={() => setIsCreateOpen(false)} />
+              <LeagueForm onSuccess={() => setIsCreateOpen(false)} />
             </DialogContent>
           </Dialog>
         </div>
@@ -146,17 +178,27 @@ export function LeagueManagement() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-2">
-                {league.isActive ? (
-                  <CheckCircle className="h-4 w-4 text-green-600" />
-                ) : (
-                  <Circle className="h-4 w-4 text-muted-foreground" />
-                )}
-                <Switch
-                  checked={league.isActive}
-                  onCheckedChange={() => handleToggleActive(league)}
-                />
-                <span className="text-sm text-muted-foreground">Active</span>
+              <div className="flex items-center gap-3">
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  onClick={() => setEditingLeague(league)}
+                >
+                  <Pencil className="h-4 w-4" />
+                </Button>
+
+                <div className="flex items-center gap-2">
+                  {league.isActive ? (
+                    <CheckCircle className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <Circle className="h-4 w-4 text-muted-foreground" />
+                  )}
+                  <Switch
+                    checked={league.isActive}
+                    onCheckedChange={() => handleToggleActive(league)}
+                  />
+                  <span className="text-sm text-muted-foreground">Active</span>
+                </div>
               </div>
             </div>
           ))}
@@ -168,6 +210,20 @@ export function LeagueManagement() {
           )}
         </div>
       </CardContent>
+
+      <Dialog open={!!editingLeague} onOpenChange={(open) => !open && setEditingLeague(null)}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit League</DialogTitle>
+          </DialogHeader>
+          {editingLeague && (
+            <LeagueForm
+              league={editingLeague}
+              onSuccess={() => setEditingLeague(null)}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 }
