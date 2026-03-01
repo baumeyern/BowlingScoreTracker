@@ -247,7 +247,7 @@ export function WeekManagement() {
       </Card>
 
       {unassignedWeeks.length > 0 && (
-        <Card className="border-amber-200 dark:border-amber-800">
+        <Card className="border-amber-500/30">
           <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
             <div className="flex items-center justify-between gap-2">
               <div>
