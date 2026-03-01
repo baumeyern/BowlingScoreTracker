@@ -26,8 +26,6 @@ export function Stats() {
     return <LoadingSpinner />;
   }
 
-  const displayStats = leagueStats && leagueStats.length > 0 ? leagueStats : statsData;
-
   return (
     <div className="container mx-auto p-4 space-y-6 max-w-6xl">
       <div>
