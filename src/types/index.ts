@@ -1,3 +1,12 @@
+export interface League {
+  id: string;
+  name: string;
+  startDate?: string;
+  endDate?: string;
+  isActive: boolean;
+  createdAt: string;
+}
+
 export interface Bowler {
   id: string;
   name: string;
@@ -9,6 +18,7 @@ export interface Bowler {
 
 export interface Week {
   id: string;
+  leagueId?: string;
   weekNumber: number;
   bowlingDate?: string;
   isComplete: boolean;
@@ -50,6 +60,7 @@ export interface BowlerStats {
 export interface WeeklySeries {
   weekId: string;
   bowlerId: string;
+  leagueId?: string;
   weekNumber: number;
   seriesTotal: number;
   gameScores: number[];
@@ -59,6 +70,7 @@ export interface WeeklySeries {
 export interface PredictionResult {
   predictorId: string;
   weekId: string;
+  leagueId?: string;
   weekNumber: number;
   targetId: string;
   gameNumber: 1 | 2 | 3;
@@ -66,6 +78,17 @@ export interface PredictionResult {
   actualScore: number | null;
   difference: number | null;
   points: number | null;
+}
+
+export interface LeagueBowlerStats {
+  leagueId: string;
+  bowlerId: string;
+  totalGames: number;
+  average: number;
+  handicap: number;
+  highGame: number;
+  lowGame: number;
+  totalPins: number;
 }
 
 export interface PredictionLeaderboardEntry {

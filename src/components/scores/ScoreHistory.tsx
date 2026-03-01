@@ -1,6 +1,7 @@
 import { useBowlers } from '@/hooks/useBowlers';
 import { useWeeklySeries } from '@/hooks/useGames';
 import { useBowlerStats } from '@/hooks/useStats';
+import { useSelectedLeague } from '@/contexts/LeagueContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -10,12 +11,17 @@ export function ScoreHistory() {
   const { data: bowlers, isLoading: bowlersLoading } = useBowlers();
   const { data: weeklySeries, isLoading: seriesLoading } = useWeeklySeries();
   const { data: statsData } = useBowlerStats();
+  const { selectedLeagueId } = useSelectedLeague();
 
   if (bowlersLoading || seriesLoading) {
     return <LoadingSpinner />;
   }
 
-  if (!weeklySeries || weeklySeries.length === 0) {
+  const filteredSeries = selectedLeagueId
+    ? weeklySeries?.filter(s => s.leagueId === selectedLeagueId)
+    : weeklySeries;
+
+  if (!filteredSeries || filteredSeries.length === 0) {
     return (
       <EmptyState
         icon={History}
@@ -25,13 +31,13 @@ export function ScoreHistory() {
     );
   }
 
-  const weekNumbers = [...new Set(weeklySeries.map(s => s.weekNumber))].sort((a, b) => b - a);
+  const weekNumbers = [...new Set(filteredSeries.map(s => s.weekNumber))].sort((a, b) => b - a);
 
   return (
     <div className="space-y-4">
       {weekNumbers.map(weekNum => {
-        const weekData = weeklySeries.filter(s => s.weekNumber === weekNum);
-        
+        const weekData = filteredSeries.filter(s => s.weekNumber === weekNum);
+
         return (
           <Card key={weekNum}>
             <CardHeader>
@@ -57,7 +63,7 @@ export function ScoreHistory() {
                       const series = weekData.find(s => s.bowlerId === bowler.id);
                       const stats = statsData?.find(s => s.bowlerId === bowler.id);
                       const handicap = stats?.handicap || 0;
-                      
+
                       return (
                         <tr key={bowler.id} className="border-b last:border-0">
                           <td className="py-3 px-2">
@@ -85,7 +91,7 @@ export function ScoreHistory() {
                             +{handicap * (series?.gamesEntered || 0)}
                           </td>
                           <td className="text-center py-3 px-2 font-semibold">
-                            {series ? Math.round((series.seriesTotal + (handicap * series.gamesEntered)) / series.gamesEntered) : '-'}
+                            {series ? Math.round(series.seriesTotal / series.gamesEntered) : '-'}
                           </td>
                           <td className="text-center py-3 px-2 font-bold text-primary">
                             {series ? series.seriesTotal + (handicap * series.gamesEntered) : '-'}

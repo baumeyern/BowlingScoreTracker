@@ -1,5 +1,6 @@
 import { useBowlers } from '@/hooks/useBowlers';
 import { usePredictionResults } from '@/hooks/usePredictions';
+import { useSelectedLeague } from '@/contexts/LeagueContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
@@ -9,12 +10,17 @@ import { calculatePredictionLeaderboard } from '@/lib/predictions';
 export function PredictionLeaderboard() {
   const { data: bowlers } = useBowlers();
   const { data: allResults, isLoading } = usePredictionResults();
+  const { selectedLeagueId } = useSelectedLeague();
 
   if (isLoading) {
     return <LoadingSpinner />;
   }
 
-  if (!allResults || allResults.length === 0) {
+  const filteredResults = selectedLeagueId
+    ? allResults?.filter(r => r.leagueId === selectedLeagueId)
+    : allResults;
+
+  if (!filteredResults || filteredResults.length === 0) {
     return (
       <EmptyState
         icon={Trophy}
@@ -24,7 +30,7 @@ export function PredictionLeaderboard() {
     );
   }
 
-  const leaderboard = calculatePredictionLeaderboard(allResults);
+  const leaderboard = calculatePredictionLeaderboard(filteredResults);
 
   return (
     <Card>

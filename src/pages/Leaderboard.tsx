@@ -1,42 +1,52 @@
 import { PredictionLeaderboard } from '@/components/predictions/PredictionLeaderboard';
 import { usePredictionResults } from '@/hooks/usePredictions';
 import { useBowlers } from '@/hooks/useBowlers';
+import { useSelectedLeague } from '@/contexts/LeagueContext';
+import { useLeagues } from '@/hooks/useLeagues';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 
 export function Leaderboard() {
   const { data: results, isLoading: resultsLoading } = usePredictionResults();
   const { data: bowlers } = useBowlers();
+  const { selectedLeagueId } = useSelectedLeague();
+  const { data: leagues } = useLeagues();
+
+  const selectedLeague = leagues?.find(l => l.id === selectedLeagueId);
 
   if (resultsLoading) {
     return <LoadingSpinner />;
   }
 
-  // Calculate weekly winners
-  const weeklyWinners: { weekNumber: number; winnerId: string; points: number }[] = [];
-  
-  if (results && bowlers) {
-    const byWeek = results.reduce((acc, result) => {
+  const leagueResults = selectedLeagueId
+    ? results?.filter(r => r.leagueId === selectedLeagueId)
+    : results;
+
+  const weeklyWinners: { weekNumber: number; winnerId: string; totalDiff: number }[] = [];
+
+  if (leagueResults && bowlers) {
+    const byWeek = leagueResults.reduce((acc, result) => {
+      if (result.difference === null) return acc;
       if (!acc[result.weekNumber]) {
         acc[result.weekNumber] = {};
       }
       if (!acc[result.weekNumber][result.predictorId]) {
         acc[result.weekNumber][result.predictorId] = 0;
       }
-      acc[result.weekNumber][result.predictorId] += result.points || 0;
+      acc[result.weekNumber][result.predictorId] += result.difference;
       return acc;
     }, {} as Record<number, Record<string, number>>);
 
-    Object.entries(byWeek).forEach(([weekNum, predictorPoints]) => {
-      const entries = Object.entries(predictorPoints);
+    Object.entries(byWeek).forEach(([weekNum, predictorDiffs]) => {
+      const entries = Object.entries(predictorDiffs);
       if (entries.length > 0) {
-        const winner = entries.reduce((max, curr) => 
-          curr[1] > max[1] ? curr : max
+        const winner = entries.reduce((min, curr) =>
+          curr[1] < min[1] ? curr : min
         );
         weeklyWinners.push({
           weekNumber: Number(weekNum),
           winnerId: winner[0],
-          points: winner[1],
+          totalDiff: winner[1],
         });
       }
     });
@@ -47,7 +57,9 @@ export function Leaderboard() {
     <div className="container mx-auto p-4 space-y-6 max-w-6xl">
       <div>
         <h1 className="text-3xl font-bold mb-2">Prediction Leaderboard</h1>
-        <p className="text-muted-foreground">See who's the best at predicting scores</p>
+        <p className="text-muted-foreground">
+          {selectedLeague ? `${selectedLeague.name} — ` : ''}See who's the best at predicting scores
+        </p>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -83,7 +95,7 @@ export function Leaderboard() {
                             <p className="text-xs text-muted-foreground">{bowler?.name}</p>
                           </div>
                         </div>
-                        <p className="text-sm font-bold text-primary">{winner.points} pts</p>
+                        <p className="text-sm font-bold text-primary">{winner.totalDiff} pins off</p>
                       </div>
                     );
                   })}
@@ -94,33 +106,19 @@ export function Leaderboard() {
 
           <Card className="mt-6">
             <CardHeader>
-              <CardTitle className="text-lg">How Points Work</CardTitle>
+              <CardTitle className="text-lg">How Scoring Works</CardTitle>
             </CardHeader>
             <CardContent className="text-sm space-y-2">
-              <div className="flex justify-between">
+              <p className="text-muted-foreground">
+                Your score is the total pin difference between your predictions and actual scores. Lower is better!
+              </p>
+              <div className="flex justify-between mt-3">
                 <span>Exact match</span>
-                <span className="font-bold">10 pts</span>
+                <span className="font-bold">0 pins off</span>
               </div>
-              <div className="flex justify-between">
-                <span>Within 10 pins</span>
-                <span className="font-bold">7 pts</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Within 25 pins</span>
-                <span className="font-bold">5 pts</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Within 50 pins</span>
-                <span className="font-bold">3 pts</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Within 75 pins</span>
-                <span className="font-bold">1 pt</span>
-              </div>
-              <div className="flex justify-between text-muted-foreground">
-                <span>More than 75</span>
-                <span>0 pts</span>
-              </div>
+              <p className="text-xs text-muted-foreground mt-2">
+                The predictor with the lowest total pins off wins each week and the overall leaderboard.
+              </p>
             </CardContent>
           </Card>
         </div>

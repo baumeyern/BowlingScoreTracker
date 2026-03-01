@@ -50,6 +50,7 @@ export function useWeeklySeries(weekId?: string) {
       return data.map(series => ({
         weekId: series.week_id,
         bowlerId: series.bowler_id,
+        leagueId: series.league_id,
         weekNumber: series.week_number,
         seriesTotal: series.series_total,
         gameScores: series.game_scores,

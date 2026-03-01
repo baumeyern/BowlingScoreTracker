@@ -1,5 +1,7 @@
 import { useBowlers } from '@/hooks/useBowlers';
-import { useBowlerStats } from '@/hooks/useStats';
+import { useBowlerStats, useLeagueBowlerStats } from '@/hooks/useStats';
+import { useSelectedLeague } from '@/contexts/LeagueContext';
+import { useLeagues } from '@/hooks/useLeagues';
 import { BowlerStatsCard } from '@/components/stats/BowlerStatsCard';
 import { TeamStats } from '@/components/stats/TeamStats';
 import { PersonalBests } from '@/components/stats/PersonalBests';
@@ -14,16 +16,25 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 export function Stats() {
   const { data: bowlers, isLoading: bowlersLoading } = useBowlers();
   const { data: statsData, isLoading: statsLoading } = useBowlerStats();
+  const { selectedLeagueId } = useSelectedLeague();
+  const { data: leagueStats } = useLeagueBowlerStats(selectedLeagueId || undefined);
+  const { data: leagues } = useLeagues();
+
+  const selectedLeague = leagues?.find(l => l.id === selectedLeagueId);
 
   if (bowlersLoading || statsLoading) {
     return <LoadingSpinner />;
   }
 
+  const displayStats = leagueStats && leagueStats.length > 0 ? leagueStats : statsData;
+
   return (
     <div className="container mx-auto p-4 space-y-6 max-w-6xl">
       <div>
         <h1 className="text-3xl font-bold mb-2">Statistics</h1>
-        <p className="text-muted-foreground">View detailed performance analytics</p>
+        <p className="text-muted-foreground">
+          {selectedLeague ? `${selectedLeague.name} — ` : ''}View detailed performance analytics
+        </p>
       </div>
 
       <TeamStats />
@@ -48,12 +59,14 @@ export function Stats() {
         <TabsContent value="individual" className="space-y-6 mt-6">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {bowlers?.map(bowler => {
-              const stats = statsData?.find(s => s.bowlerId === bowler.id);
+              const leagueStat = leagueStats?.find(s => s.bowlerId === bowler.id);
+              const overallStat = statsData?.find(s => s.bowlerId === bowler.id);
+              const stat = leagueStat || overallStat;
               return (
                 <BowlerStatsCard
                   key={bowler.id}
                   bowler={bowler}
-                  stats={stats}
+                  stats={stat}
                 />
               );
             })}

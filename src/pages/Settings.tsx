@@ -1,8 +1,9 @@
 import { BowlerManagement } from '@/components/settings/BowlerManagement';
 import { WeekManagement } from '@/components/settings/WeekManagement';
+import { LeagueManagement } from '@/components/settings/LeagueManagement';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Settings as SettingsIcon, Users, Calendar, Info } from 'lucide-react';
+import { Settings as SettingsIcon, Users, Calendar, Info, Trophy } from 'lucide-react';
 
 export function Settings() {
   return (
@@ -15,8 +16,12 @@ export function Settings() {
         <p className="text-muted-foreground">Manage your league configuration</p>
       </div>
 
-      <Tabs defaultValue="bowlers" className="w-full">
-        <TabsList className="grid w-full grid-cols-3">
+      <Tabs defaultValue="leagues" className="w-full">
+        <TabsList className="grid w-full grid-cols-4">
+          <TabsTrigger value="leagues" className="flex items-center gap-2">
+            <Trophy className="h-4 w-4" />
+            <span className="hidden sm:inline">Leagues</span>
+          </TabsTrigger>
           <TabsTrigger value="bowlers" className="flex items-center gap-2">
             <Users className="h-4 w-4" />
             <span className="hidden sm:inline">Bowlers</span>
@@ -30,6 +35,10 @@ export function Settings() {
             <span className="hidden sm:inline">About</span>
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="leagues" className="mt-6">
+          <LeagueManagement />
+        </TabsContent>
 
         <TabsContent value="bowlers" className="mt-6">
           <BowlerManagement />
@@ -58,28 +67,10 @@ export function Settings() {
 
               <div>
                 <h3 className="font-semibold mb-2">Prediction Scoring</h3>
-                <div className="text-sm space-y-1">
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Exact match</span>
-                    <span className="font-semibold">10 points</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Within 10 pins</span>
-                    <span className="font-semibold">7 points</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Within 25 pins</span>
-                    <span className="font-semibold">5 points</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Within 50 pins</span>
-                    <span className="font-semibold">3 points</span>
-                  </div>
-                  <div className="flex justify-between">
-                    <span className="text-muted-foreground">Within 75 pins</span>
-                    <span className="font-semibold">1 point</span>
-                  </div>
-                </div>
+                <p className="text-sm text-muted-foreground">
+                  Your prediction score is the total pin difference between your predicted scores and actual scores.
+                  Lower is better! The predictor with the lowest total pins off wins.
+                </p>
               </div>
 
               <div>

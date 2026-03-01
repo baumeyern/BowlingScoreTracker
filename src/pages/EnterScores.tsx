@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useWeeks } from '@/hooks/useWeeks';
+import { useSelectedLeague } from '@/contexts/LeagueContext';
 import { WeeklyScoreEntry } from '@/components/scores/WeeklyScoreEntry';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
@@ -9,15 +10,20 @@ import { Edit, Calendar } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
 export function EnterScores() {
-  const { data: weeks, isLoading } = useWeeks();
+  const { selectedLeagueId } = useSelectedLeague();
+  const { data: weeks, isLoading } = useWeeks(selectedLeagueId || undefined);
   const [selectedWeekId, setSelectedWeekId] = useState<string>('');
 
   useEffect(() => {
-    if (weeks && weeks.length > 0 && !selectedWeekId) {
-      // Default to the latest week
-      setSelectedWeekId(weeks[weeks.length - 1].id);
+    if (weeks && weeks.length > 0) {
+      const currentValid = weeks.some(w => w.id === selectedWeekId);
+      if (!currentValid) {
+        setSelectedWeekId(weeks[weeks.length - 1].id);
+      }
+    } else {
+      setSelectedWeekId('');
     }
-  }, [weeks, selectedWeekId]);
+  }, [weeks, selectedLeagueId]);
 
   if (isLoading) {
     return <LoadingSpinner />;

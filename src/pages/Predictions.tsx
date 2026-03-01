@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useWeeks } from '@/hooks/useWeeks';
+import { useSelectedLeague } from '@/contexts/LeagueContext';
 import { PredictionEntryNew } from '@/components/predictions/PredictionEntryNew';
 import { PredictionResultsNew } from '@/components/predictions/PredictionResultsNew';
 import { Card, CardHeader, CardTitle } from '@/components/ui/card';
@@ -11,14 +12,20 @@ import { TrendingUp, Calendar } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 
 export function Predictions() {
-  const { data: weeks, isLoading } = useWeeks();
+  const { selectedLeagueId } = useSelectedLeague();
+  const { data: weeks, isLoading } = useWeeks(selectedLeagueId || undefined);
   const [selectedWeekId, setSelectedWeekId] = useState<string>('');
 
   useEffect(() => {
-    if (weeks && weeks.length > 0 && !selectedWeekId) {
-      setSelectedWeekId(weeks[weeks.length - 1].id);
+    if (weeks && weeks.length > 0) {
+      const currentValid = weeks.some(w => w.id === selectedWeekId);
+      if (!currentValid) {
+        setSelectedWeekId(weeks[weeks.length - 1].id);
+      }
+    } else {
+      setSelectedWeekId('');
     }
-  }, [weeks, selectedWeekId]);
+  }, [weeks, selectedLeagueId]);
 
   if (isLoading) {
     return <LoadingSpinner />;

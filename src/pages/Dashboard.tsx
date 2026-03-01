@@ -2,10 +2,13 @@ import { Link } from 'react-router-dom';
 import { useBowlers } from '@/hooks/useBowlers';
 import { useWeeks } from '@/hooks/useWeeks';
 import { useBowlerStats } from '@/hooks/useStats';
+import { useLeagueBowlerStats } from '@/hooks/useStats';
 import { usePredictions } from '@/hooks/usePredictions';
 import { useWeeklySeries } from '@/hooks/useGames';
 import { usePredictionResults } from '@/hooks/usePredictions';
 import { useSelectedBowler } from '@/contexts/BowlerContext';
+import { useSelectedLeague } from '@/contexts/LeagueContext';
+import { useLeagues } from '@/hooks/useLeagues';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { BowlerSelector } from '@/components/layout/BowlerSelector';
@@ -15,8 +18,11 @@ import { AlertCircle, Edit, TrendingUp, BarChart3 } from 'lucide-react';
 
 export function Dashboard() {
   const { data: bowlers, isLoading: bowlersLoading } = useBowlers();
-  const { data: weeks, isLoading: weeksLoading } = useWeeks();
+  const { selectedLeagueId } = useSelectedLeague();
+  const { data: leagues } = useLeagues();
+  const { data: weeks, isLoading: weeksLoading } = useWeeks(selectedLeagueId || undefined);
   const { data: statsData } = useBowlerStats();
+  const { data: leagueStats } = useLeagueBowlerStats(selectedLeagueId || undefined);
   const { data: allPredictionResults } = usePredictionResults();
   const { selectedBowlerId, setSelectedBowlerId } = useSelectedBowler();
 
@@ -24,26 +30,27 @@ export function Dashboard() {
   const { data: currentWeekPredictions } = usePredictions(currentWeek?.id, selectedBowlerId);
   const { data: currentWeekSeries } = useWeeklySeries(currentWeek?.id);
 
+  const selectedLeague = leagues?.find(l => l.id === selectedLeagueId);
+
   if (bowlersLoading || weeksLoading) {
     return <LoadingSpinner />;
   }
 
-  const selectedStats = statsData?.find(s => s.bowlerId === selectedBowlerId);
+  const overallStats = statsData?.find(s => s.bowlerId === selectedBowlerId);
+  const leagueStat = leagueStats?.find(s => s.bowlerId === selectedBowlerId);
 
-  // Check if current week needs predictions or scores
-  // Need 9 predictions: 3 games for each of 3 teammates
   const needsPredictions = currentWeek && (!currentWeekPredictions || currentWeekPredictions.length < 9);
   const needsScores = currentWeek && (!currentWeekSeries || currentWeekSeries.filter(s => s.bowlerId === selectedBowlerId).length === 0);
 
-  // Calculate prediction leaderboard
-  const predictionLeaderboard = allPredictionResults 
-    ? calculatePredictionLeaderboard(allPredictionResults)
+  const leaguePredictionResults = allPredictionResults?.filter(r => r.leagueId === selectedLeagueId) || [];
+  const predictionLeaderboard = leaguePredictionResults.length > 0
+    ? calculatePredictionLeaderboard(leaguePredictionResults)
     : [];
   const topPredictor = predictionLeaderboard.length > 0 ? predictionLeaderboard[0] : null;
   const topPredictorBowler = topPredictor ? bowlers?.find(b => b.id === topPredictor.bowlerId) : null;
 
-  // Team standings by average
-  const teamStandings = statsData
+  const displayStats = leagueStats || statsData;
+  const teamStandings = displayStats
     ?.map(stat => {
       const bowler = bowlers?.find(b => b.id === stat.bowlerId);
       return { ...stat, bowler };
@@ -54,37 +61,43 @@ export function Dashboard() {
     <div className="container mx-auto p-4 space-y-6 max-w-6xl">
       <div>
         <h1 className="text-3xl font-bold">Team Dashboard</h1>
-        {currentWeek && (
-          <p className="text-muted-foreground">
-            Week {currentWeek.weekNumber} {currentWeek.bowlingDate && `• ${new Date(currentWeek.bowlingDate).toLocaleDateString()}`}
-          </p>
-        )}
+        <p className="text-muted-foreground">
+          {selectedLeague ? selectedLeague.name : 'No league selected'}
+          {currentWeek && ` — Week ${currentWeek.weekNumber}`}
+          {currentWeek?.bowlingDate && ` • ${new Date(currentWeek.bowlingDate).toLocaleDateString()}`}
+        </p>
       </div>
-      
+
       <BowlerSelector
         value={selectedBowlerId}
         onChange={setSelectedBowlerId}
         label="Select Your Profile"
       />
 
-      {/* Personal Stats */}
-      {selectedStats && (
+      {(leagueStat || overallStats) && (
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Your Average</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {leagueStat ? 'League Average' : 'Overall Average'}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{selectedStats.average.toFixed(1)}</p>
+              <p className="text-4xl font-bold">{(leagueStat || overallStats)!.average.toFixed(1)}</p>
+              {leagueStat && overallStats && (
+                <p className="text-xs text-muted-foreground mt-1">Overall: {overallStats.average.toFixed(1)}</p>
+              )}
             </CardContent>
           </Card>
 
           <Card>
             <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">Your Handicap</CardTitle>
+              <CardTitle className="text-sm font-medium text-muted-foreground">
+                {leagueStat ? 'League Handicap' : 'Handicap'}
+              </CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold">{selectedStats.handicap}</p>
+              <p className="text-4xl font-bold">{(leagueStat || overallStats)!.handicap}</p>
             </CardContent>
           </Card>
 
@@ -93,13 +106,12 @@ export function Dashboard() {
               <CardTitle className="text-sm font-medium text-muted-foreground">High Game</CardTitle>
             </CardHeader>
             <CardContent>
-              <p className="text-4xl font-bold text-green-600 dark:text-green-400">{selectedStats.highGame}</p>
+              <p className="text-4xl font-bold text-green-600 dark:text-green-400">{(leagueStat || overallStats)!.highGame}</p>
             </CardContent>
           </Card>
         </div>
       )}
 
-      {/* Action Items */}
       {currentWeek && (
         <Card>
           <CardHeader>
@@ -151,7 +163,6 @@ export function Dashboard() {
         </Card>
       )}
 
-      {/* Team Standings */}
       <Card>
         <CardHeader>
           <CardTitle>Team Standings (by Average)</CardTitle>
@@ -159,7 +170,7 @@ export function Dashboard() {
         <CardContent>
           <div className="space-y-2">
             {teamStandings.map((standing, index) => {
-              const percentage = (standing.average / 220) * 100; // Max average of 220
+              const percentage = (standing.average / 220) * 100;
               return (
                 <div key={standing.bowlerId} className="space-y-1">
                   <div className="flex items-center justify-between text-sm gap-3">
@@ -190,7 +201,6 @@ export function Dashboard() {
         </CardContent>
       </Card>
 
-      {/* Prediction Game Leader */}
       {topPredictorBowler && (
         <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
           <CardContent className="p-6">
@@ -221,7 +231,6 @@ export function Dashboard() {
         </Card>
       )}
 
-      {/* Quick Actions */}
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Button asChild variant="outline" className="h-20">
           <Link to="/stats" className="flex flex-col items-center gap-2">

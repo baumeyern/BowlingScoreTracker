@@ -48,6 +48,7 @@ export function usePredictionResults(weekId?: string) {
       return data.map(result => ({
         predictorId: result.predictor_id,
         weekId: result.week_id,
+        leagueId: result.league_id,
         weekNumber: result.week_number,
         targetId: result.target_id,
         gameNumber: result.game_number,
