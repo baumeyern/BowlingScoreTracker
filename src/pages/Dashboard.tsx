@@ -212,9 +212,9 @@ export function Dashboard() {
               </div>
               <div className="text-right">
                 <p className="text-4xl font-bold text-amber-600 dark:text-amber-400">
-                  {topPredictor?.totalPoints}
+                  {topPredictor?.totalDifference}
                 </p>
-                <p className="text-sm text-muted-foreground">points 🏆</p>
+                <p className="text-sm text-muted-foreground">total pins off 🏆</p>
               </div>
             </div>
           </CardContent>

@@ -48,6 +48,7 @@ export function ScoreHistory() {
                       <th className="text-center py-2 px-2">Game 3</th>
                       <th className="text-center py-2 px-2">Series</th>
                       <th className="text-center py-2 px-2">HC</th>
+                      <th className="text-center py-2 px-2">Avg</th>
                       <th className="text-center py-2 px-2">Total</th>
                     </tr>
                   </thead>
@@ -82,6 +83,9 @@ export function ScoreHistory() {
                           </td>
                           <td className="text-center py-3 px-2 text-sm text-muted-foreground">
                             +{handicap * (series?.gamesEntered || 0)}
+                          </td>
+                          <td className="text-center py-3 px-2 font-semibold">
+                            {series ? Math.round((series.seriesTotal + (handicap * series.gamesEntered)) / series.gamesEntered) : '-'}
                           </td>
                           <td className="text-center py-3 px-2 font-bold text-primary">
                             {series ? series.seriesTotal + (handicap * series.gamesEntered) : '-'}

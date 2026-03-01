@@ -31,7 +31,7 @@ export function PredictionLeaderboard() {
       <CardHeader>
         <CardTitle className="flex items-center gap-2">
           <Trophy className="h-5 w-5 text-amber-500" />
-          Prediction Game Leaderboard
+          Prediction Accuracy Leaderboard
         </CardTitle>
       </CardHeader>
       <CardContent>
@@ -74,10 +74,10 @@ export function PredictionLeaderboard() {
                 </div>
 
                 <div className="text-right">
-                  <p className="text-2xl font-bold text-primary">{entry.totalPoints}</p>
-                  <p className="text-xs text-muted-foreground">points</p>
+                  <p className="text-2xl font-bold text-primary">{entry.totalDifference}</p>
+                  <p className="text-xs text-muted-foreground">total pins off</p>
                   <p className="text-xs text-muted-foreground mt-1">
-                    Avg diff: {entry.avgDifference.toFixed(1)}
+                    Avg: {entry.avgDifference.toFixed(1)} per game
                   </p>
                 </div>
               </div>

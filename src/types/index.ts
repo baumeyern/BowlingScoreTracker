@@ -70,7 +70,7 @@ export interface PredictionResult {
 
 export interface PredictionLeaderboardEntry {
   bowlerId: string;
-  totalPoints: number;
+  totalDifference: number;
   avgDifference: number;
   predictionsCount: number;
 }

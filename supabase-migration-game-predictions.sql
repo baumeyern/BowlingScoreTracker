@@ -30,6 +30,7 @@ CREATE INDEX idx_predictions_target ON predictions(target_id);
 CREATE INDEX idx_predictions_week_predictor ON predictions(week_id, predictor_id);
 
 -- Step 5: Create updated prediction accuracy view
+-- Scoring is pure pin difference (lower is better)
 CREATE OR REPLACE VIEW prediction_accuracy AS
 SELECT 
   p.predictor_id,
@@ -40,18 +41,7 @@ SELECT
   p.predicted_score,
   g.score AS actual_score,
   ABS(p.predicted_score - g.score) AS difference,
-  CASE 
-    WHEN g.score IS NOT NULL THEN 
-      CASE
-        WHEN ABS(p.predicted_score - g.score) = 0 THEN 10
-        WHEN ABS(p.predicted_score - g.score) <= 10 THEN 7
-        WHEN ABS(p.predicted_score - g.score) <= 25 THEN 5
-        WHEN ABS(p.predicted_score - g.score) <= 50 THEN 3
-        WHEN ABS(p.predicted_score - g.score) <= 75 THEN 1
-        ELSE 0
-      END
-    ELSE NULL 
-  END AS points
+  ABS(p.predicted_score - g.score) AS points
 FROM predictions p
 JOIN weeks w ON p.week_id = w.id
 LEFT JOIN games g ON p.week_id = g.week_id 
