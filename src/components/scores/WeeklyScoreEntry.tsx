@@ -142,12 +142,12 @@ export function WeeklyScoreEntry({ weekId }: WeeklyScoreEntryProps) {
 
         return (
           <Card key={bowler.id}>
-            <CardHeader className="pb-4">
+            <CardHeader className="pb-3 px-3 sm:px-6">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
+                <div className="flex items-center gap-2 sm:gap-3">
                   <BowlerAvatar bowler={bowler} size="md" />
                   <div>
-                    <CardTitle className="text-xl">{bowler.name}</CardTitle>
+                    <CardTitle className="text-lg sm:text-xl">{bowler.name}</CardTitle>
                     {bowler.nickname && (
                       <p className="text-sm text-muted-foreground">{bowler.nickname}</p>
                     )}
@@ -159,8 +159,8 @@ export function WeeklyScoreEntry({ weekId }: WeeklyScoreEntryProps) {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex justify-center gap-4 flex-wrap sm:flex-nowrap">
+            <CardContent className="space-y-4 px-3 sm:px-6">
+              <div className="flex justify-center gap-2 sm:gap-4">
                 <GameScoreInput
                   gameNumber={1}
                   value={bowlerScores[1]}

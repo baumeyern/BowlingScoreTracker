@@ -1,5 +1,4 @@
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { cn, isValidScore } from '@/lib/utils';
 
 interface GameScoreInputProps {
@@ -25,26 +24,27 @@ export function GameScoreInput({ gameNumber, value, onChange, disabled }: GameSc
   const isInvalid = value !== null && !isValidScore(value);
 
   return (
-    <div className="flex flex-col items-center">
-      <Label htmlFor={`game-${gameNumber}`} className="mb-2 text-sm font-medium">
+    <div className="flex flex-col items-center flex-1 max-w-28">
+      <span className="mb-1.5 text-xs font-medium text-muted-foreground">
         Game {gameNumber}
-      </Label>
+      </span>
       <Input
-        id={`game-${gameNumber}`}
         type="number"
+        inputMode="numeric"
+        pattern="[0-9]*"
         min="0"
         max="300"
         value={value ?? ''}
         onChange={handleChange}
         disabled={disabled}
         className={cn(
-          'w-24 h-16 text-center text-2xl font-bold',
+          'w-full h-14 sm:h-16 text-center text-xl sm:text-2xl font-bold rounded-xl bg-muted/30 border-border/50 focus:border-primary/50 focus:bg-primary/5 transition-colors',
           isInvalid && 'border-destructive focus-visible:ring-destructive'
         )}
-        placeholder="---"
+        placeholder="—"
       />
       {isInvalid && (
-        <p className="text-xs text-destructive mt-1">0-300</p>
+        <p className="text-[10px] text-destructive mt-1">0-300</p>
       )}
     </div>
   );

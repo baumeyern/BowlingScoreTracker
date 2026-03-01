@@ -7,6 +7,7 @@ import { EmptyState } from '@/components/common/EmptyState';
 import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import { Trophy } from 'lucide-react';
 import { calculatePredictionLeaderboard } from '@/lib/predictions';
+import { cn } from '@/lib/utils';
 
 export function PredictionLeaderboard() {
   const { data: bowlers } = useBowlers();
@@ -35,14 +36,14 @@ export function PredictionLeaderboard() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Trophy className="h-5 w-5 text-amber-500" />
-          Prediction Accuracy Leaderboard
+      <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
+          Prediction Leaderboard
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+      <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+        <div className="space-y-2 sm:space-y-3">
           {leaderboard.map((entry, index) => {
             const bowler = bowlers?.find(b => b.id === entry.bowlerId);
             if (!bowler) return null;
@@ -54,32 +55,31 @@ export function PredictionLeaderboard() {
               <div
                 key={entry.bowlerId}
                 className={cn(
-                  'flex items-center justify-between p-4 rounded-lg border',
-                  isFirst && 'border-amber-400 bg-amber-50 dark:bg-amber-950/20',
-                  isTop3 && !isFirst && 'bg-muted/50'
+                  'flex items-center justify-between p-2.5 sm:p-4 rounded-xl border border-border/50',
+                  isFirst && 'border-amber-500/30 bg-amber-500/10 glow-amber',
+                  isTop3 && !isFirst && 'bg-muted/20'
                 )}
               >
-                <div className="flex items-center gap-4 flex-1">
-                  <div className="text-2xl font-bold text-muted-foreground w-8">
+                <div className="flex items-center gap-2 sm:gap-4 flex-1 min-w-0">
+                  <span className="text-sm sm:text-2xl font-bold text-muted-foreground w-5 sm:w-8 text-center flex-shrink-0">
                     {index === 0 && '🥇'}
                     {index === 1 && '🥈'}
                     {index === 2 && '🥉'}
                     {index > 2 && `${index + 1}.`}
-                  </div>
-                  <BowlerAvatar bowler={bowler} size="lg" />
-                  <div>
-                    <p className="font-semibold text-lg">{bowler.name}</p>
-                    <p className="text-sm text-muted-foreground">
+                  </span>
+                  <BowlerAvatar bowler={bowler} size="sm" />
+                  <div className="min-w-0">
+                    <p className="font-semibold text-sm sm:text-lg truncate">{bowler.name}</p>
+                    <p className="text-[10px] sm:text-sm text-muted-foreground">
                       {entry.predictionsCount} predictions
                     </p>
                   </div>
                 </div>
 
-                <div className="text-right">
-                  <p className="text-2xl font-bold text-primary">{entry.totalDifference}</p>
-                  <p className="text-xs text-muted-foreground">total pins off</p>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Avg: {entry.avgDifference.toFixed(1)} per game
+                <div className="text-right flex-shrink-0 ml-2">
+                  <p className="text-lg sm:text-2xl font-bold text-primary tabular-nums">{entry.totalDifference}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground tabular-nums">
+                    avg {entry.avgDifference.toFixed(1)}/game
                   </p>
                 </div>
               </div>
@@ -89,8 +89,4 @@ export function PredictionLeaderboard() {
       </CardContent>
     </Card>
   );
-}
-
-function cn(...inputs: any[]) {
-  return inputs.filter(Boolean).join(' ');
 }

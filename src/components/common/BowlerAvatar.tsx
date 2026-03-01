@@ -25,7 +25,10 @@ export function BowlerAvatar({ bowler, size = 'md', className }: BowlerAvatarPro
     return (
       <div
         className={cn('rounded-full flex-shrink-0', config.container, className)}
-        style={{ backgroundColor: bowler.avatarColor }}
+        style={{
+          backgroundColor: bowler.avatarColor,
+          boxShadow: `0 0 6px ${bowler.avatarColor}60`,
+        }}
       />
     );
   }
@@ -39,7 +42,10 @@ export function BowlerAvatar({ bowler, size = 'md', className }: BowlerAvatarPro
           config.border,
           className,
         )}
-        style={{ borderColor: bowler.avatarColor }}
+        style={{
+          borderColor: bowler.avatarColor,
+          boxShadow: `0 0 8px ${bowler.avatarColor}30`,
+        }}
       >
         <img
           src={bowler.profilePictureUrl}
@@ -58,7 +64,10 @@ export function BowlerAvatar({ bowler, size = 'md', className }: BowlerAvatarPro
         config.text,
         className,
       )}
-      style={{ backgroundColor: bowler.avatarColor }}
+      style={{
+        backgroundColor: bowler.avatarColor,
+        boxShadow: `0 0 10px ${bowler.avatarColor}30`,
+      }}
     >
       {bowler.name.charAt(0)}
     </div>

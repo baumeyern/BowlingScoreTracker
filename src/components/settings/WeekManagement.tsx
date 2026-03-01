@@ -48,26 +48,29 @@ function CreateWeekForm({ leagueId, onSuccess }: { leagueId: string; onSuccess: 
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="weekNumber">Week Number *</Label>
-        <Input
-          id="weekNumber"
-          type="number"
-          min="1"
-          value={weekNumber}
-          onChange={(e) => setWeekNumber(parseInt(e.target.value) || 1)}
-          required
-        />
-      </div>
+      <div className="grid grid-cols-2 gap-3">
+        <div className="space-y-2">
+          <Label htmlFor="weekNumber">Week # *</Label>
+          <Input
+            id="weekNumber"
+            type="number"
+            inputMode="numeric"
+            min="1"
+            value={weekNumber}
+            onChange={(e) => setWeekNumber(parseInt(e.target.value) || 1)}
+            required
+          />
+        </div>
 
-      <div className="space-y-2">
-        <Label htmlFor="bowlingDate">Bowling Date</Label>
-        <Input
-          id="bowlingDate"
-          type="date"
-          value={bowlingDate}
-          onChange={(e) => setBowlingDate(e.target.value)}
-        />
+        <div className="space-y-2">
+          <Label htmlFor="bowlingDate">Date</Label>
+          <Input
+            id="bowlingDate"
+            type="date"
+            value={bowlingDate}
+            onChange={(e) => setBowlingDate(e.target.value)}
+          />
+        </div>
       </div>
 
       <Button type="submit" disabled={createWeek.isPending} className="w-full">
@@ -151,8 +154,8 @@ export function WeekManagement() {
   if (!selectedLeagueId) {
     return (
       <Card>
-        <CardContent className="p-6">
-          <p className="text-center text-muted-foreground">
+        <CardContent className="p-4 sm:p-6">
+          <p className="text-center text-sm text-muted-foreground">
             Create a league first in the Leagues tab, then manage weeks here.
           </p>
         </CardContent>
@@ -161,24 +164,24 @@ export function WeekManagement() {
   }
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       <Card>
-        <CardHeader>
+        <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
           <div className="flex items-center justify-between">
             <div>
-              <CardTitle>Manage Weeks</CardTitle>
+              <CardTitle className="text-base sm:text-lg">Manage Weeks</CardTitle>
               {selectedLeague && (
-                <p className="text-sm text-muted-foreground mt-1">{selectedLeague.name}</p>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-0.5">{selectedLeague.name}</p>
               )}
             </div>
             <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
               <DialogTrigger asChild>
-                <Button>
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Week
+                <Button size="sm">
+                  <Plus className="h-4 w-4 mr-1.5" />
+                  Create
                 </Button>
               </DialogTrigger>
-              <DialogContent>
+              <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
                 <DialogHeader>
                   <DialogTitle>Create New Week</DialogTitle>
                 </DialogHeader>
@@ -187,56 +190,56 @@ export function WeekManagement() {
             </Dialog>
           </div>
         </CardHeader>
-        <CardContent>
+        <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
           <div className="space-y-2">
             {leagueWeeks?.map((week) => (
               <div
                 key={week.id}
-                className="flex items-center justify-between p-4 border rounded-lg"
+                className="flex items-center justify-between p-2.5 sm:p-4 border rounded-lg gap-2"
               >
-                <div className="flex items-center gap-4">
-                  <Calendar className="h-5 w-5 text-muted-foreground" />
-                  <div>
-                    <p className="font-semibold">Week {week.weekNumber}</p>
+                <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                  <Calendar className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+                  <div className="min-w-0">
+                    <p className="font-semibold text-sm">Wk {week.weekNumber}</p>
                     {week.bowlingDate && (
-                      <p className="text-sm text-muted-foreground">{formatDate(week.bowlingDate)}</p>
+                      <p className="text-[10px] sm:text-sm text-muted-foreground">{formatDate(week.bowlingDate)}</p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex items-center gap-3">
-                  <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 sm:gap-3 flex-shrink-0">
+                  <div className="flex items-center gap-1 sm:gap-2">
                     {week.isComplete ? (
-                      <CheckCircle className="h-4 w-4 text-green-600" />
+                      <CheckCircle className="h-3.5 w-3.5 text-green-600" />
                     ) : (
-                      <Circle className="h-4 w-4 text-muted-foreground" />
+                      <Circle className="h-3.5 w-3.5 text-muted-foreground" />
                     )}
                     <Switch
                       checked={week.isComplete}
                       onCheckedChange={() => handleToggleComplete(week)}
                     />
-                    <span className="text-sm text-muted-foreground">Complete</span>
+                    <span className="text-[10px] sm:text-sm text-muted-foreground hidden sm:inline">Done</span>
                   </div>
 
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1 sm:gap-2">
                     {week.predictionsLocked ? (
-                      <Lock className="h-4 w-4 text-amber-600" />
+                      <Lock className="h-3.5 w-3.5 text-amber-600" />
                     ) : (
-                      <Unlock className="h-4 w-4 text-muted-foreground" />
+                      <Unlock className="h-3.5 w-3.5 text-muted-foreground" />
                     )}
                     <Switch
                       checked={week.predictionsLocked}
                       onCheckedChange={() => handleToggleLock(week)}
                     />
-                    <span className="text-sm text-muted-foreground">Lock Predictions</span>
+                    <span className="text-[10px] sm:text-sm text-muted-foreground hidden sm:inline">Lock</span>
                   </div>
                 </div>
               </div>
             ))}
 
             {(!leagueWeeks || leagueWeeks.length === 0) && (
-              <div className="text-center py-8 text-muted-foreground">
-                <p>No weeks in this league yet. Create a new week or assign existing ones below.</p>
+              <div className="text-center py-6 text-muted-foreground">
+                <p className="text-sm">No weeks yet. Create a new week or assign existing ones below.</p>
               </div>
             )}
           </div>
@@ -245,44 +248,45 @@ export function WeekManagement() {
 
       {unassignedWeeks.length > 0 && (
         <Card className="border-amber-200 dark:border-amber-800">
-          <CardHeader>
-            <div className="flex items-center justify-between">
+          <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
+            <div className="flex items-center justify-between gap-2">
               <div>
-                <CardTitle className="text-lg">Unassigned Weeks</CardTitle>
-                <p className="text-sm text-muted-foreground mt-1">
-                  These weeks are not attached to any league. Assign them to keep your scores intact.
+                <CardTitle className="text-base sm:text-lg">Unassigned Weeks</CardTitle>
+                <p className="text-[10px] sm:text-sm text-muted-foreground mt-0.5">
+                  Not attached to any league
                 </p>
               </div>
-              <Button variant="outline" onClick={handleAssignAllToLeague}>
-                <ArrowRight className="h-4 w-4 mr-2" />
-                Assign All to {selectedLeague?.name || 'League'}
+              <Button variant="outline" size="sm" onClick={handleAssignAllToLeague}>
+                <ArrowRight className="h-3.5 w-3.5 mr-1" />
+                <span className="hidden sm:inline">Assign All</span>
+                <span className="sm:hidden">All</span>
               </Button>
             </div>
           </CardHeader>
-          <CardContent>
+          <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
             <div className="space-y-2">
               {unassignedWeeks.map((week) => (
                 <div
                   key={week.id}
-                  className="flex items-center justify-between p-4 border border-dashed rounded-lg"
+                  className="flex items-center justify-between p-2.5 sm:p-4 border border-dashed rounded-lg gap-2"
                 >
-                  <div className="flex items-center gap-4">
-                    <Calendar className="h-5 w-5 text-amber-500" />
-                    <div>
-                      <p className="font-semibold">Week {week.weekNumber}</p>
+                  <div className="flex items-center gap-2 sm:gap-4 min-w-0">
+                    <Calendar className="h-4 w-4 text-amber-500 flex-shrink-0" />
+                    <div className="min-w-0">
+                      <p className="font-semibold text-sm">Wk {week.weekNumber}</p>
                       {week.bowlingDate && (
-                        <p className="text-sm text-muted-foreground">{formatDate(week.bowlingDate)}</p>
+                        <p className="text-[10px] sm:text-sm text-muted-foreground">{formatDate(week.bowlingDate)}</p>
                       )}
-                      <p className="text-xs text-amber-600 dark:text-amber-400">Not assigned to a league</p>
                     </div>
                   </div>
                   <Button
                     variant="outline"
                     size="sm"
                     onClick={() => handleAssignToLeague(week)}
+                    className="flex-shrink-0 h-8"
                   >
-                    <ArrowRight className="h-4 w-4 mr-2" />
-                    Assign
+                    <ArrowRight className="h-3.5 w-3.5 sm:mr-1" />
+                    <span className="hidden sm:inline">Assign</span>
                   </Button>
                 </div>
               ))}

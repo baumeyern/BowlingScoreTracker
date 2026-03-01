@@ -1,5 +1,4 @@
 import { Card, CardContent } from '@/components/ui/card';
-import { Label } from '@/components/ui/label';
 import { GamePredictionInput } from './GamePredictionInput';
 import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import type { Bowler } from '@/types';
@@ -31,58 +30,55 @@ export function PredictionCardNew({
 }: PredictionCardNewProps) {
   return (
     <Card>
-      <CardContent className="p-4">
-        <div className="flex items-start justify-between mb-4 gap-3">
-          <div className="flex items-center gap-3 flex-1">
+      <CardContent className="p-3 sm:p-4">
+        <div className="flex items-center justify-between mb-3 gap-2">
+          <div className="flex items-center gap-2 sm:gap-3 flex-1 min-w-0">
             <BowlerAvatar bowler={targetBowler} size="md" />
-            <div className="flex-1">
-              <Label className="text-base font-semibold break-words">{targetBowler.name}</Label>
+            <div className="min-w-0">
+              <p className="font-semibold text-sm sm:text-base truncate">{targetBowler.name}</p>
               {targetBowler.nickname && (
-                <p className="text-xs text-muted-foreground break-words">{targetBowler.nickname}</p>
+                <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{targetBowler.nickname}</p>
               )}
             </div>
           </div>
-          <div className="text-right text-sm flex-shrink-0">
+          <div className="text-right flex-shrink-0">
             {average !== undefined && (
-              <p className="text-muted-foreground whitespace-nowrap">Avg: <span className="font-semibold">{average.toFixed(1)}</span></p>
+              <p className="text-xs sm:text-sm text-muted-foreground">Avg: <span className="font-semibold">{average.toFixed(1)}</span></p>
             )}
             {lastWeekScores && (
-              <p className="text-xs text-muted-foreground whitespace-nowrap">
+              <p className="text-[10px] sm:text-xs text-muted-foreground">
                 Last: {lastWeekScores[0]}, {lastWeekScores[1]}, {lastWeekScores[2]}
               </p>
             )}
           </div>
         </div>
 
-        <div className="space-y-2">
-          <p className="text-sm font-medium text-center mb-3">Predict each game:</p>
-          <div className="flex justify-center gap-3">
-            <GamePredictionInput
-              gameNumber={1}
-              value={game1}
-              onChange={onGame1Change}
-              disabled={disabled}
-              targetName={targetBowler.name}
-            />
-            <GamePredictionInput
-              gameNumber={2}
-              value={game2}
-              onChange={onGame2Change}
-              disabled={disabled}
-              targetName={targetBowler.name}
-            />
-            <GamePredictionInput
-              gameNumber={3}
-              value={game3}
-              onChange={onGame3Change}
-              disabled={disabled}
-              targetName={targetBowler.name}
-            />
-          </div>
-          <p className="text-xs text-muted-foreground text-center mt-2">
-            💡 Predicted series: {(game1 || 0) + (game2 || 0) + (game3 || 0)}
-          </p>
+        <div className="flex justify-center gap-2 sm:gap-3">
+          <GamePredictionInput
+            gameNumber={1}
+            value={game1}
+            onChange={onGame1Change}
+            disabled={disabled}
+            targetName={targetBowler.name}
+          />
+          <GamePredictionInput
+            gameNumber={2}
+            value={game2}
+            onChange={onGame2Change}
+            disabled={disabled}
+            targetName={targetBowler.name}
+          />
+          <GamePredictionInput
+            gameNumber={3}
+            value={game3}
+            onChange={onGame3Change}
+            disabled={disabled}
+            targetName={targetBowler.name}
+          />
         </div>
+        <p className="text-[10px] sm:text-xs text-muted-foreground text-center mt-2 tabular-nums">
+          Predicted series: {(game1 || 0) + (game2 || 0) + (game3 || 0)}
+        </p>
       </CardContent>
     </Card>
   );

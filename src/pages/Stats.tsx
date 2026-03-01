@@ -27,11 +27,11 @@ export function Stats() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6 max-w-6xl">
+    <div className="container mx-auto px-3 sm:px-4 py-4 space-y-4 sm:space-y-6 max-w-6xl">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Statistics</h1>
-        <p className="text-muted-foreground">
-          {selectedLeague ? `${selectedLeague.name} — ` : ''}View detailed performance analytics
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1">Statistics</h1>
+        <p className="text-xs sm:text-base text-muted-foreground">
+          {selectedLeague ? `${selectedLeague.name} — ` : ''}Performance analytics
         </p>
       </div>
 
@@ -39,23 +39,23 @@ export function Stats() {
 
       <Tabs defaultValue="charts" className="w-full">
         <TabsList className="grid w-full grid-cols-3">
-          <TabsTrigger value="charts">Charts</TabsTrigger>
-          <TabsTrigger value="individual">Individual</TabsTrigger>
-          <TabsTrigger value="bests">Personal Bests</TabsTrigger>
+          <TabsTrigger value="charts" className="text-xs sm:text-sm">Charts</TabsTrigger>
+          <TabsTrigger value="individual" className="text-xs sm:text-sm">Individual</TabsTrigger>
+          <TabsTrigger value="bests" className="text-xs sm:text-sm">Bests</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="charts" className="space-y-6 mt-6">
+        <TabsContent value="charts" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
           <AverageOverTime />
           <TeamComparison />
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
             <GameByGameChart />
             <ScoreDistribution />
           </div>
           <HandicapTrend />
         </TabsContent>
 
-        <TabsContent value="individual" className="space-y-6 mt-6">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <TabsContent value="individual" className="space-y-4 sm:space-y-6 mt-4 sm:mt-6">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6">
             {bowlers?.map(bowler => {
               const leagueStat = leagueStats?.find(s => s.bowlerId === bowler.id);
               const overallStat = statsData?.find(s => s.bowlerId === bowler.id);
@@ -71,7 +71,7 @@ export function Stats() {
           </div>
         </TabsContent>
 
-        <TabsContent value="bests" className="mt-6">
+        <TabsContent value="bests" className="mt-4 sm:mt-6">
           <PersonalBests />
         </TabsContent>
       </Tabs>

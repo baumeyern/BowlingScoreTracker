@@ -14,7 +14,7 @@ import { Button } from '@/components/ui/button';
 import { BowlerSelector } from '@/components/layout/BowlerSelector';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { calculatePredictionLeaderboard } from '@/lib/predictions';
-import { AlertCircle, Edit, TrendingUp, BarChart3 } from 'lucide-react';
+import { AlertCircle, Edit, TrendingUp, BarChart3, Trophy, ChevronRight } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
 import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 
@@ -48,9 +48,6 @@ export function Dashboard() {
   const predictionLeaderboard = leaguePredictionResults.length > 0
     ? calculatePredictionLeaderboard(leaguePredictionResults)
     : [];
-  const topPredictor = predictionLeaderboard.length > 0 ? predictionLeaderboard[0] : null;
-  const topPredictorBowler = topPredictor ? bowlers?.find(b => b.id === topPredictor.bowlerId) : null;
-
   const displayStats = leagueStats || statsData;
   const teamStandings = displayStats
     ?.map(stat => {
@@ -60,10 +57,10 @@ export function Dashboard() {
     .sort((a, b) => b.average - a.average) || [];
 
   return (
-    <div className="container mx-auto p-4 space-y-6 max-w-6xl">
+    <div className="container mx-auto px-3 sm:px-4 py-4 space-y-4 sm:space-y-6 max-w-6xl">
       <div>
-        <h1 className="text-3xl font-bold">Team Dashboard</h1>
-        <p className="text-muted-foreground">
+        <h1 className="text-2xl sm:text-3xl font-bold bg-gradient-to-r from-foreground to-foreground/70 bg-clip-text text-transparent">Team Dashboard</h1>
+        <p className="text-sm sm:text-base text-muted-foreground">
           {selectedLeague ? selectedLeague.name : 'No league selected'}
           {currentWeek && ` — Week ${currentWeek.weekNumber}`}
           {currentWeek?.bowlingDate && ` • ${formatDate(currentWeek.bowlingDate)}`}
@@ -77,121 +74,95 @@ export function Dashboard() {
       />
 
       {(leagueStat || overallStats) && (
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {leagueStat ? 'League Average' : 'Overall Average'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{(leagueStat || overallStats)!.average.toFixed(1)}</p>
-              {leagueStat && overallStats && (
-                <p className="text-xs text-muted-foreground mt-1">Overall: {overallStats.average.toFixed(1)}</p>
-              )}
-            </CardContent>
-          </Card>
+        <div className="grid grid-cols-3 gap-2 sm:gap-4">
+          <div className="rounded-xl bg-gradient-to-br from-cyan-500/10 to-blue-600/5 border border-cyan-500/20 p-3 sm:p-5">
+            <p className="text-[10px] sm:text-xs font-medium text-cyan-400/80 mb-1">
+              {leagueStat ? 'League Avg' : 'Average'}
+            </p>
+            <p className="text-2xl sm:text-4xl font-bold text-cyan-50 tabular-nums">{(leagueStat || overallStats)!.average.toFixed(1)}</p>
+            {leagueStat && overallStats && (
+              <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Overall: {overallStats.average.toFixed(1)}</p>
+            )}
+          </div>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">
-                {leagueStat ? 'League Handicap' : 'Handicap'}
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold">{(leagueStat || overallStats)!.handicap}</p>
-            </CardContent>
-          </Card>
+          <div className="rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-600/5 border border-violet-500/20 p-3 sm:p-5">
+            <p className="text-[10px] sm:text-xs font-medium text-violet-400/80 mb-1">
+              {leagueStat ? 'League HC' : 'Handicap'}
+            </p>
+            <p className="text-2xl sm:text-4xl font-bold text-violet-50 tabular-nums">{(leagueStat || overallStats)!.handicap}</p>
+          </div>
 
-          <Card>
-            <CardHeader className="pb-3">
-              <CardTitle className="text-sm font-medium text-muted-foreground">High Game</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-4xl font-bold text-green-600 dark:text-green-400">{(leagueStat || overallStats)!.highGame}</p>
-            </CardContent>
-          </Card>
+          <div className="rounded-xl bg-gradient-to-br from-emerald-500/10 to-green-600/5 border border-emerald-500/20 p-3 sm:p-5">
+            <p className="text-[10px] sm:text-xs font-medium text-emerald-400/80 mb-1">High Game</p>
+            <p className="text-2xl sm:text-4xl font-bold text-emerald-300 tabular-nums">{(leagueStat || overallStats)!.highGame}</p>
+          </div>
         </div>
       )}
 
-      {currentWeek && (
-        <Card>
-          <CardHeader>
-            <CardTitle>This Week</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-3">
-            {needsPredictions && !currentWeek.predictionsLocked && (
-              <div className="flex items-center justify-between p-3 bg-amber-50 dark:bg-amber-950/20 border border-amber-200 dark:border-amber-800 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <AlertCircle className="h-5 w-5 text-amber-600" />
-                  <div>
-                    <p className="font-medium">Predictions due!</p>
-                    <p className="text-sm text-muted-foreground">Submit your predictions before bowling</p>
-                  </div>
-                </div>
-                <Button asChild>
-                  <Link to="/predictions">
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Make Predictions
-                  </Link>
-                </Button>
+      {currentWeek && (needsPredictions || needsScores) && (
+        <div className="space-y-2">
+          {needsPredictions && !currentWeek.predictionsLocked && (
+            <Link
+              to="/predictions"
+              className="flex items-center gap-3 p-3 sm:p-4 bg-amber-500/10 border border-amber-500/20 rounded-xl active:scale-[0.98] transition-all hover:bg-amber-500/15"
+            >
+              <div className="p-1.5 rounded-lg bg-amber-500/20">
+                <AlertCircle className="h-4 w-4 text-amber-400" />
               </div>
-            )}
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm sm:text-base">Predictions due!</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Submit before bowling</p>
+              </div>
+              <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            </Link>
+          )}
 
-            {needsScores && (
-              <div className="flex items-center justify-between p-3 bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-800 rounded-lg">
-                <div className="flex items-center gap-3">
-                  <Edit className="h-5 w-5 text-blue-600" />
-                  <div>
-                    <p className="font-medium">Scores not entered</p>
-                    <p className="text-sm text-muted-foreground">Enter this week's scores</p>
-                  </div>
-                </div>
-                <Button asChild>
-                  <Link to="/scores">
-                    <Edit className="h-4 w-4 mr-2" />
-                    Enter Scores
-                  </Link>
-                </Button>
+          {needsScores && (
+            <Link
+              to="/scores"
+              className="flex items-center gap-3 p-3 sm:p-4 bg-blue-500/10 border border-blue-500/20 rounded-xl active:scale-[0.98] transition-all hover:bg-blue-500/15"
+            >
+              <div className="p-1.5 rounded-lg bg-blue-500/20">
+                <Edit className="h-4 w-4 text-blue-400" />
               </div>
-            )}
-
-            {!needsPredictions && !needsScores && (
-              <div className="text-center p-4 text-muted-foreground">
-                ✓ All set for this week!
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-sm sm:text-base">Scores not entered</p>
+                <p className="text-xs sm:text-sm text-muted-foreground">Enter this week's scores</p>
               </div>
-            )}
-          </CardContent>
-        </Card>
+              <ChevronRight className="h-4 w-4 text-muted-foreground flex-shrink-0" />
+            </Link>
+          )}
+        </div>
       )}
 
       <Card>
-        <CardHeader>
-          <CardTitle>Team Standings (by Average)</CardTitle>
+        <CardHeader className="pb-3 px-3 sm:px-6 pt-4 sm:pt-6">
+          <CardTitle className="text-base sm:text-lg">Team Standings</CardTitle>
         </CardHeader>
-        <CardContent>
-          <div className="space-y-2">
+        <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+          <div className="space-y-3">
             {teamStandings.map((standing, index) => {
               const percentage = (standing.average / 220) * 100;
               return (
-                <div key={standing.bowlerId} className="space-y-1">
-                  <div className="flex items-center justify-between text-sm gap-3">
-                    <div className="flex items-center gap-2 flex-1">
-                      <span className="font-semibold w-6 flex-shrink-0">{index + 1}.</span>
+                <div key={standing.bowlerId} className="space-y-1.5">
+                  <div className="flex items-center justify-between gap-2">
+                    <div className="flex items-center gap-2 flex-1 min-w-0">
+                      <span className="font-bold text-sm w-5 flex-shrink-0 text-muted-foreground">{index + 1}</span>
                       {standing.bowler && (
                         <BowlerAvatar bowler={standing.bowler} size="xxs" />
                       )}
-                      <span className="font-medium">{standing.bowler?.name}</span>
-                      {index === 0 && <span className="text-lg flex-shrink-0">🔥</span>}
+                      <span className="font-medium text-sm truncate">{standing.bowler?.name}</span>
+                      {index === 0 && <span className="flex-shrink-0 text-xs">🔥</span>}
                     </div>
-                    <span className="font-bold flex-shrink-0 ml-2">{standing.average.toFixed(1)}</span>
+                    <span className="font-bold text-sm flex-shrink-0 tabular-nums">{standing.average.toFixed(1)}</span>
                   </div>
-                  <div className="w-full bg-muted rounded-full h-2">
+                  <div className="w-full bg-muted/40 rounded-full h-1.5 sm:h-2 overflow-hidden">
                     <div
-                      className="h-2 rounded-full transition-all"
+                      className="h-full rounded-full transition-all"
                       style={{
                         width: `${percentage}%`,
-                        backgroundColor: standing.bowler?.avatarColor,
+                        background: `linear-gradient(90deg, ${standing.bowler?.avatarColor}99, ${standing.bowler?.avatarColor})`,
+                        boxShadow: `0 0 8px ${standing.bowler?.avatarColor}40`,
                       }}
                     />
                   </div>
@@ -202,48 +173,68 @@ export function Dashboard() {
         </CardContent>
       </Card>
 
-      {topPredictorBowler && (
-        <Card className="bg-gradient-to-br from-amber-50 to-orange-50 dark:from-amber-950/20 dark:to-orange-950/20 border-amber-200 dark:border-amber-800">
-          <CardContent className="p-6">
-            <div className="flex items-center justify-between">
-              <div>
-                <p className="text-sm text-muted-foreground mb-2">Prediction Game Leader</p>
-                <div className="flex items-center gap-3">
-                  <BowlerAvatar bowler={topPredictorBowler} size="lg" />
-                  <div>
-                    <p className="text-xl font-bold">{topPredictorBowler.name}</p>
-                    <p className="text-sm text-muted-foreground">{topPredictor?.predictionsCount} predictions</p>
+      {predictionLeaderboard.length > 0 && (
+        <Card>
+          <CardHeader className="pb-3 px-3 sm:px-6 pt-4 sm:pt-6">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Trophy className="h-4 w-4 sm:h-5 sm:w-5 text-amber-400" />
+              Prediction Standings
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+            <div className="space-y-2">
+              {predictionLeaderboard.map((entry, index) => {
+                const bowler = bowlers?.find(b => b.id === entry.bowlerId);
+                if (!bowler) return null;
+                return (
+                  <div
+                    key={entry.bowlerId}
+                    className={`flex items-center justify-between p-2.5 sm:p-3 rounded-xl border transition-colors ${
+                      index === 0 ? 'border-amber-500/30 bg-amber-500/10 glow-amber' : 'border-border/50'
+                    }`}
+                  >
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                      <span className="font-semibold w-5 sm:w-6 text-center flex-shrink-0 text-sm">
+                        {index === 0 && '🥇'}
+                        {index === 1 && '🥈'}
+                        {index === 2 && '🥉'}
+                        {index > 2 && `${index + 1}.`}
+                      </span>
+                      <BowlerAvatar bowler={bowler} size="sm" />
+                      <div className="min-w-0">
+                        <p className="font-medium text-sm truncate">{bowler.name}</p>
+                        <p className="text-[10px] sm:text-xs text-muted-foreground">{entry.predictionsCount} predictions</p>
+                      </div>
+                    </div>
+                    <div className="text-right flex-shrink-0 ml-2">
+                      <p className="text-base sm:text-lg font-bold text-primary tabular-nums">{entry.totalDifference}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground tabular-nums">avg {entry.avgDifference.toFixed(1)}</p>
+                    </div>
                   </div>
-                </div>
-              </div>
-              <div className="text-right">
-                <p className="text-4xl font-bold text-amber-600 dark:text-amber-400">
-                  {topPredictor?.totalDifference}
-                </p>
-                <p className="text-sm text-muted-foreground">total pins off 🏆</p>
-              </div>
+                );
+              })}
             </div>
           </CardContent>
         </Card>
       )}
 
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <Button asChild variant="outline" className="h-20">
-          <Link to="/stats" className="flex flex-col items-center gap-2">
-            <BarChart3 className="h-6 w-6" />
-            <span>View All Stats</span>
+      <div className="grid grid-cols-3 gap-2 sm:gap-4">
+        <Button asChild variant="outline" className="h-16 sm:h-20 rounded-xl border-border/50 hover:bg-primary/5 hover:border-primary/30 transition-all">
+          <Link to="/stats" className="flex flex-col items-center gap-1 sm:gap-2">
+            <BarChart3 className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <span className="text-xs sm:text-sm">Stats</span>
           </Link>
         </Button>
-        <Button asChild variant="outline" className="h-20">
-          <Link to="/history" className="flex flex-col items-center gap-2">
-            <Edit className="h-6 w-6" />
-            <span>Score History</span>
+        <Button asChild variant="outline" className="h-16 sm:h-20 rounded-xl border-border/50 hover:bg-primary/5 hover:border-primary/30 transition-all">
+          <Link to="/history" className="flex flex-col items-center gap-1 sm:gap-2">
+            <Edit className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <span className="text-xs sm:text-sm">History</span>
           </Link>
         </Button>
-        <Button asChild variant="outline" className="h-20">
-          <Link to="/predictions" className="flex flex-col items-center gap-2">
-            <TrendingUp className="h-6 w-6" />
-            <span>Predictions</span>
+        <Button asChild variant="outline" className="h-16 sm:h-20 rounded-xl border-border/50 hover:bg-primary/5 hover:border-primary/30 transition-all">
+          <Link to="/predictions" className="flex flex-col items-center gap-1 sm:gap-2">
+            <TrendingUp className="h-5 w-5 sm:h-6 sm:w-6 text-primary" />
+            <span className="text-xs sm:text-sm">Predict</span>
           </Link>
         </Button>
       </div>

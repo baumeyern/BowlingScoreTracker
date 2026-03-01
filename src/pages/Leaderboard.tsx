@@ -55,43 +55,43 @@ export function Leaderboard() {
   }
 
   return (
-    <div className="container mx-auto p-4 space-y-6 max-w-6xl">
+    <div className="container mx-auto px-3 sm:px-4 py-4 space-y-4 sm:space-y-6 max-w-6xl">
       <div>
-        <h1 className="text-3xl font-bold mb-2">Prediction Leaderboard</h1>
-        <p className="text-muted-foreground">
-          {selectedLeague ? `${selectedLeague.name} — ` : ''}See who's the best at predicting scores
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1">Leaderboard</h1>
+        <p className="text-xs sm:text-base text-muted-foreground">
+          {selectedLeague ? `${selectedLeague.name} — ` : ''}Best predictors
         </p>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         <div className="lg:col-span-2">
           <PredictionLeaderboard />
         </div>
 
-        <div>
+        <div className="space-y-4 sm:space-y-6">
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg">Weekly Winners</CardTitle>
+            <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-2 sm:pb-4">
+              <CardTitle className="text-base sm:text-lg">Weekly Winners</CardTitle>
             </CardHeader>
-            <CardContent>
+            <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
               {weeklyWinners.length === 0 ? (
                 <p className="text-sm text-muted-foreground text-center py-4">
                   No results yet
                 </p>
               ) : (
-                <div className="space-y-2">
+                <div className="space-y-1.5 sm:space-y-2">
                   {weeklyWinners.map(winner => {
                     const bowler = bowlers?.find(b => b.id === winner.winnerId);
                     return (
                       <div key={winner.weekNumber} className="flex items-center justify-between p-2 border rounded">
-                        <div className="flex items-center gap-2">
-                          {bowler && <BowlerAvatar bowler={bowler} size="sm" />}
-                          <div>
-                            <p className="text-sm font-medium">Week {winner.weekNumber}</p>
-                            <p className="text-xs text-muted-foreground">{bowler?.name}</p>
+                        <div className="flex items-center gap-2 min-w-0">
+                          {bowler && <BowlerAvatar bowler={bowler} size="xxs" />}
+                          <div className="min-w-0">
+                            <p className="text-xs sm:text-sm font-medium">Wk {winner.weekNumber}</p>
+                            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{bowler?.name}</p>
                           </div>
                         </div>
-                        <p className="text-sm font-bold text-primary">{winner.totalDiff} pins off</p>
+                        <p className="text-xs sm:text-sm font-bold text-primary flex-shrink-0 ml-2 tabular-nums">{winner.totalDiff} off</p>
                       </div>
                     );
                   })}
@@ -100,20 +100,13 @@ export function Leaderboard() {
             </CardContent>
           </Card>
 
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle className="text-lg">How Scoring Works</CardTitle>
+          <Card>
+            <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-2 sm:pb-4">
+              <CardTitle className="text-base sm:text-lg">How Scoring Works</CardTitle>
             </CardHeader>
-            <CardContent className="text-sm space-y-2">
+            <CardContent className="text-xs sm:text-sm space-y-2 px-3 sm:px-6 pb-4 sm:pb-6">
               <p className="text-muted-foreground">
-                Your score is the total pin difference between your predictions and actual scores. Lower is better!
-              </p>
-              <div className="flex justify-between mt-3">
-                <span>Exact match</span>
-                <span className="font-bold">0 pins off</span>
-              </div>
-              <p className="text-xs text-muted-foreground mt-2">
-                The predictor with the lowest total pins off wins each week and the overall leaderboard.
+                Your score is the total pin difference between predictions and actual scores. Lower is better!
               </p>
             </CardContent>
           </Card>

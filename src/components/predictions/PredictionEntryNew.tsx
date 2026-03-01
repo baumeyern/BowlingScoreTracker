@@ -120,8 +120,8 @@ export function PredictionEntryNew({ weekId, weekNumber, predictionsLocked }: Pr
   return (
     <div className="space-y-6">
       <Card>
-        <CardContent className="p-4">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
+        <CardContent className="p-3 sm:p-4">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-3">
             <Label className="text-sm font-medium">You are:</Label>
             <BowlerSelector
               value={selectedBowlerId}

@@ -5,6 +5,7 @@ import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { BowlerProvider } from '@/contexts/BowlerContext';
 import { LeagueProvider } from '@/contexts/LeagueContext';
 import { Header } from '@/components/layout/Header';
+import { MobileNav } from '@/components/layout/MobileNav';
 import { Dashboard } from '@/pages/Dashboard';
 import { EnterScores } from '@/pages/EnterScores';
 import { Predictions } from '@/pages/Predictions';
@@ -31,7 +32,7 @@ function App() {
             <Router>
               <div className="min-h-screen bg-background">
                 <Header />
-                <main className="pb-16 md:pb-8">
+                <main className="pb-20 md:pb-8">
                   <Routes>
                     <Route path="/" element={<Dashboard />} />
                     <Route path="/scores" element={<EnterScores />} />
@@ -42,6 +43,7 @@ function App() {
                     <Route path="/settings" element={<Settings />} />
                   </Routes>
                 </main>
+                <MobileNav className="md:hidden" />
               </div>
               <Toaster position="top-center" richColors />
             </Router>

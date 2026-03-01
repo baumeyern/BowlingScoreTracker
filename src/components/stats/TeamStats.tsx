@@ -1,7 +1,5 @@
 import { useBowlerStats } from '@/hooks/useStats';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { Users, TrendingUp, Award } from 'lucide-react';
 
 export function TeamStats() {
   const { data: statsData, isLoading } = useBowlerStats();
@@ -20,45 +18,24 @@ export function TeamStats() {
   const totalPins = statsData.reduce((sum, s) => sum + s.totalPins, 0);
 
   return (
-    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Team Average
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold">{teamAverage.toFixed(1)}</p>
-          <p className="text-xs text-muted-foreground mt-1">{totalGames} total games</p>
-        </CardContent>
-      </Card>
+    <div className="grid grid-cols-3 gap-2 sm:gap-4">
+      <div className="rounded-xl bg-gradient-to-br from-cyan-500/10 to-blue-600/5 border border-cyan-500/20 p-3 sm:p-5">
+        <p className="text-[10px] sm:text-xs font-medium text-cyan-400/80 mb-1">Team Avg</p>
+        <p className="text-2xl sm:text-3xl font-bold text-cyan-50 tabular-nums">{teamAverage.toFixed(1)}</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">{totalGames} games</p>
+      </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <Award className="h-4 w-4" />
-            Team High Game
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold text-green-600 dark:text-green-400">{teamHighGame}</p>
-          <p className="text-xs text-muted-foreground mt-1">Best single game</p>
-        </CardContent>
-      </Card>
+      <div className="rounded-xl bg-gradient-to-br from-emerald-500/10 to-green-600/5 border border-emerald-500/20 p-3 sm:p-5">
+        <p className="text-[10px] sm:text-xs font-medium text-emerald-400/80 mb-1">High Game</p>
+        <p className="text-2xl sm:text-3xl font-bold text-emerald-300 tabular-nums">{teamHighGame}</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Best single</p>
+      </div>
 
-      <Card>
-        <CardHeader className="pb-3">
-          <CardTitle className="text-sm font-medium flex items-center gap-2">
-            <TrendingUp className="h-4 w-4" />
-            Total Pins
-          </CardTitle>
-        </CardHeader>
-        <CardContent>
-          <p className="text-3xl font-bold">{totalPins.toLocaleString()}</p>
-          <p className="text-xs text-muted-foreground mt-1">As a team</p>
-        </CardContent>
-      </Card>
+      <div className="rounded-xl bg-gradient-to-br from-violet-500/10 to-purple-600/5 border border-violet-500/20 p-3 sm:p-5">
+        <p className="text-[10px] sm:text-xs font-medium text-violet-400/80 mb-1">Total Pins</p>
+        <p className="text-2xl sm:text-3xl font-bold text-violet-50 tabular-nums">{totalPins.toLocaleString()}</p>
+        <p className="text-[10px] sm:text-xs text-muted-foreground mt-1">Team total</p>
+      </div>
     </div>
   );
 }

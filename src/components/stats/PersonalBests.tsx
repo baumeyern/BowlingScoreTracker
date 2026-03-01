@@ -17,14 +17,14 @@ export function PersonalBests() {
 
   return (
     <Card>
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Award className="h-5 w-5 text-amber-500" />
+      <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
+        <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+          <Award className="h-4 w-4 sm:h-5 sm:w-5 text-amber-500" />
           Personal Bests
         </CardTitle>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-4">
+      <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+        <div className="space-y-2 sm:space-y-4">
           {bowlers?.map(bowler => {
             const stats = statsData?.find(s => s.bowlerId === bowler.id);
             const bowlerSeries = weeklySeries?.filter(s => s.bowlerId === bowler.id);
@@ -33,27 +33,27 @@ export function PersonalBests() {
               : undefined;
 
             return (
-              <div key={bowler.id} className="flex items-center justify-between p-3 border rounded-lg">
-                <div className="flex items-center gap-3">
-                  <BowlerAvatar bowler={bowler} size="md" />
-                  <div>
-                    <p className="font-semibold">{bowler.name}</p>
+              <div key={bowler.id} className="flex items-center justify-between p-2.5 sm:p-3 border rounded-lg">
+                <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                  <BowlerAvatar bowler={bowler} size="sm" />
+                  <div className="min-w-0">
+                    <p className="font-semibold text-sm truncate">{bowler.name}</p>
                     {stats && (
-                      <p className="text-sm text-muted-foreground">{stats.totalGames} games</p>
+                      <p className="text-[10px] sm:text-sm text-muted-foreground">{stats.totalGames} games</p>
                     )}
                   </div>
                 </div>
 
-                <div className="flex gap-6 text-center">
+                <div className="flex gap-3 sm:gap-6 text-center flex-shrink-0 ml-2">
                   <div>
-                    <p className="text-xs text-muted-foreground">High Game</p>
-                    <p className="text-xl font-bold text-green-600 dark:text-green-400">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">High Game</p>
+                    <p className="text-lg sm:text-xl font-bold text-emerald-400 tabular-nums">
                       {stats?.highGame || '-'}
                     </p>
                   </div>
                   <div>
-                    <p className="text-xs text-muted-foreground">High Series</p>
-                    <p className="text-xl font-bold text-blue-600 dark:text-blue-400">
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">High Series</p>
+                    <p className="text-lg sm:text-xl font-bold text-cyan-400 tabular-nums">
                       {highSeries || '-'}
                     </p>
                   </div>

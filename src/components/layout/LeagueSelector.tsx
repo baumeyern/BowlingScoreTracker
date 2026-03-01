@@ -10,8 +10,8 @@ export function LeagueSelector() {
 
   return (
     <Select value={selectedLeagueId} onValueChange={setSelectedLeagueId}>
-      <SelectTrigger className="w-44 h-9 text-sm">
-        <SelectValue placeholder="Select league" />
+      <SelectTrigger className="w-32 sm:w-44 h-8 sm:h-9 text-xs sm:text-sm">
+        <SelectValue placeholder="League" />
       </SelectTrigger>
       <SelectContent>
         {leagues.map(league => (

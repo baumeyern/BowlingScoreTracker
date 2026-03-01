@@ -1,5 +1,4 @@
 import { Card } from '@/components/ui/card';
-import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import { calculateSeriesWithHandicap } from '@/lib/handicap';
 
 interface SeriesSummaryProps {
@@ -10,7 +9,7 @@ interface SeriesSummaryProps {
   bowlerPictureUrl?: string;
 }
 
-export function SeriesSummary({ gameScores, handicap, bowlerName, bowlerColor, bowlerPictureUrl }: SeriesSummaryProps) {
+export function SeriesSummary({ gameScores, handicap }: SeriesSummaryProps) {
   const validScores = gameScores.filter((s): s is number => s !== null);
   const series = validScores.length > 0 
     ? calculateSeriesWithHandicap(validScores, handicap)
@@ -19,31 +18,17 @@ export function SeriesSummary({ gameScores, handicap, bowlerName, bowlerColor, b
   const gamesEntered = validScores.length;
 
   return (
-    <Card className="p-4 bg-gradient-to-br from-background to-muted/20">
-      <div className="flex items-center justify-between mb-3">
-        <div className="flex items-center gap-2">
-          <BowlerAvatar
-            bowler={{ name: bowlerName, avatarColor: bowlerColor, profilePictureUrl: bowlerPictureUrl }}
-            size="xs"
-            className="!h-4 !w-4"
-          />
-          <h3 className="font-semibold text-lg">{bowlerName}</h3>
-        </div>
-        <div className="text-right text-sm text-muted-foreground">
-          HC: {handicap}
-        </div>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4 text-center">
+    <Card className="p-3 sm:p-4 bg-gradient-to-br from-primary/5 to-transparent border-primary/10">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4 text-center">
         <div>
-          <p className="text-xs text-muted-foreground mb-1">Scratch Series</p>
-          <p className="text-2xl font-bold">{series.scratch}</p>
-          <p className="text-xs text-muted-foreground">({gamesEntered}/3 games)</p>
+          <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">Scratch Series</p>
+          <p className="text-xl sm:text-2xl font-bold tabular-nums">{series.scratch}</p>
+          <p className="text-[10px] sm:text-xs text-muted-foreground">({gamesEntered}/3 games)</p>
         </div>
         <div>
-          <p className="text-xs text-muted-foreground mb-1">With Handicap</p>
-          <p className="text-2xl font-bold text-primary">{series.withHandicap}</p>
-          <p className="text-xs text-muted-foreground">+{handicap * gamesEntered}</p>
+          <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">With Handicap</p>
+          <p className="text-xl sm:text-2xl font-bold text-primary tabular-nums">{series.withHandicap}</p>
+          <p className="text-[10px] sm:text-xs text-muted-foreground tabular-nums">+{handicap * gamesEntered}</p>
         </div>
       </div>
     </Card>

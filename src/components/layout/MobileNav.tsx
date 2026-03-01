@@ -1,17 +1,13 @@
-import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { Menu, X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Home, Edit, TrendingUp, BarChart3, History, Trophy, Settings } from 'lucide-react';
+import { Home, Edit, TrendingUp, BarChart3, Trophy, Settings } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const navItems = [
-  { to: '/', label: 'Dashboard', icon: Home },
+  { to: '/', label: 'Home', icon: Home },
   { to: '/scores', label: 'Scores', icon: Edit },
-  { to: '/predictions', label: 'Predictions', icon: TrendingUp },
+  { to: '/predictions', label: 'Predict', icon: TrendingUp },
+  { to: '/leaderboard', label: 'Leaders', icon: Trophy },
   { to: '/stats', label: 'Stats', icon: BarChart3 },
-  { to: '/history', label: 'History', icon: History },
-  { to: '/leaderboard', label: 'Leaderboard', icon: Trophy },
   { to: '/settings', label: 'Settings', icon: Settings },
 ];
 
@@ -20,38 +16,41 @@ interface MobileNavProps {
 }
 
 export function MobileNav({ className }: MobileNavProps) {
-  const [open, setOpen] = useState(false);
-
   return (
-    <div className={className}>
-      <Button variant="ghost" size="icon" onClick={() => setOpen(!open)}>
-        {open ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-      </Button>
-
-      {open && (
-        <div className="fixed inset-0 top-16 z-50 bg-background backdrop-blur-sm">
-          <nav className="container py-6 bg-background border-t">
-            <div className="flex flex-col gap-4">
-              {navItems.map((item) => (
-                <NavLink
-                  key={item.to}
-                  to={item.to}
-                  onClick={() => setOpen(false)}
-                  className={({ isActive }) =>
-                    cn(
-                      'flex items-center gap-3 rounded-md px-4 py-3 text-base font-medium transition-colors hover:bg-accent',
-                      isActive ? 'bg-accent text-accent-foreground' : 'text-muted-foreground'
-                    )
-                  }
-                >
-                  <item.icon className="h-5 w-5" />
-                  <span>{item.label}</span>
-                </NavLink>
-              ))}
-            </div>
-          </nav>
-        </div>
+    <nav
+      className={cn(
+        'fixed bottom-0 left-0 right-0 z-50 border-t border-border/40 bg-background/80 backdrop-blur-xl safe-area-bottom',
+        className,
       )}
-    </div>
+    >
+      <div className="grid grid-cols-6 h-16">
+        {navItems.map((item) => (
+          <NavLink
+            key={item.to}
+            to={item.to}
+            className={({ isActive }) =>
+              cn(
+                'flex flex-col items-center justify-center gap-0.5 text-[10px] font-medium transition-all active:scale-90',
+                isActive
+                  ? 'text-primary'
+                  : 'text-muted-foreground hover:text-foreground'
+              )
+            }
+          >
+            {({ isActive }) => (
+              <>
+                <div className={cn(
+                  'p-1 rounded-lg transition-colors',
+                  isActive && 'bg-primary/15'
+                )}>
+                  <item.icon className="h-5 w-5" />
+                </div>
+                <span>{item.label}</span>
+              </>
+            )}
+          </NavLink>
+        ))}
+      </div>
+    </nav>
   );
 }

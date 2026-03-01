@@ -60,7 +60,7 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
     .sort((a, b) => a.totalDifference - b.totalDifference);
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {Object.entries(byTarget).map(([targetId, targetResults]) => {
         const target = bowlers?.find(b => b.id === targetId);
         if (!target) return null;
@@ -83,12 +83,12 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
 
         return (
           <Card key={targetId}>
-            <CardHeader>
+            <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
               <div className="flex items-center justify-between">
-                <div className="flex items-center gap-3">
-                  <BowlerAvatar bowler={target} size="md" />
+                <div className="flex items-center gap-2 sm:gap-3">
+                  <BowlerAvatar bowler={target} size="sm" />
                   <div>
-                    <CardTitle className="text-lg">Predictions for {target.name}</CardTitle>
+                    <CardTitle className="text-sm sm:text-lg">Predictions for {target.name}</CardTitle>
                     {hasTargetActuals && (
                       <p className="text-sm text-muted-foreground mt-1">
                         Actual: {actuals.map((a, i) => (
@@ -103,8 +103,8 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
                 </div>
               </div>
             </CardHeader>
-            <CardContent>
-              <div className="space-y-4">
+            <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+              <div className="space-y-3 sm:space-y-4">
                 {Object.entries(byPredictor).map(([predictorId, predResults]) => {
                   const predictor = bowlers?.find(b => b.id === predictorId);
                   if (!predictor) return null;
@@ -114,20 +114,20 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
                   const hasPredActuals = sortedResults.some(r => r.actualScore !== null);
 
                   return (
-                    <div key={predictorId} className="border rounded-lg p-3">
-                      <div className="flex items-center gap-2 mb-3">
-                        <BowlerAvatar bowler={predictor} size="sm" />
-                        <div className="flex-1">
-                          <p className="font-medium">{predictor.name}</p>
+                    <div key={predictorId} className="border rounded-lg p-2.5 sm:p-3">
+                      <div className="flex items-center gap-2 mb-2 sm:mb-3">
+                        <BowlerAvatar bowler={predictor} size="xxs" />
+                        <div className="flex-1 min-w-0">
+                          <p className="font-medium text-sm truncate">{predictor.name}</p>
                         </div>
                         {hasPredActuals && (
-                          <div className="text-right">
-                            <p className="text-sm font-bold text-primary">{predictorTotalDiff} pins off</p>
+                          <div className="text-right flex-shrink-0">
+                            <p className="text-xs sm:text-sm font-bold text-primary tabular-nums">{predictorTotalDiff} off</p>
                           </div>
                         )}
                       </div>
 
-                      <div className="grid grid-cols-3 gap-2">
+                      <div className="grid grid-cols-3 gap-1.5 sm:gap-2">
                         {sortedResults.map(result => {
                           const hasActual = result.actualScore !== null;
                           const isExact = result.difference === 0;
@@ -136,19 +136,19 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
                             <div
                               key={result.gameNumber}
                               className={cn(
-                                'p-2 rounded border text-center',
-                                isExact && 'border-amber-500 bg-amber-50 dark:bg-amber-950/20'
+                                'p-1.5 sm:p-2 rounded-lg border border-border/50 text-center',
+                                isExact && 'border-amber-500/50 bg-amber-500/10'
                               )}
                             >
-                              <p className="text-xs text-muted-foreground mb-1">Game {result.gameNumber}</p>
-                              <div className="text-sm">
+                              <p className="text-[10px] sm:text-xs text-muted-foreground mb-0.5">G{result.gameNumber}</p>
+                              <div className="text-xs sm:text-sm">
                                 <p className="font-semibold">Pred: {result.predictedScore}</p>
                                 {hasActual && (
                                   <>
                                     <p className="text-muted-foreground">Act: {result.actualScore}</p>
                                     <p className={cn(
                                       'text-xs font-medium mt-1',
-                                      isExact ? 'text-amber-600 dark:text-amber-400' : 'text-muted-foreground'
+                                      isExact ? 'text-amber-400' : 'text-muted-foreground'
                                     )}>
                                       {isExact ? '🎯 Exact!' : `${result.difference} pins off`}
                                     </p>
@@ -174,14 +174,14 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
       {/* Prediction accuracy summary table */}
       {hasActuals && predictorScores.length > 0 && (
         <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <Trophy className="h-5 w-5" />
-              Prediction Accuracy This Week
+          <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
+            <CardTitle className="flex items-center gap-2 text-base sm:text-lg">
+              <Trophy className="h-4 w-4 sm:h-5 sm:w-5" />
+              Weekly Accuracy
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
+          <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+            <div className="space-y-2 sm:space-y-3">
               {predictorScores.map((entry, index) => {
                 const predictor = bowlers?.find(b => b.id === entry.predictorId);
                 if (!predictor) return null;
@@ -192,23 +192,23 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
                   <div
                     key={entry.predictorId}
                     className={cn(
-                      'flex items-center justify-between p-3 rounded-lg border',
-                      isFirst && 'border-amber-400 bg-amber-50 dark:bg-amber-950/20'
+                      'flex items-center justify-between p-2.5 sm:p-3 rounded-xl border border-border/50',
+                      isFirst && 'border-amber-500/30 bg-amber-500/10 glow-amber'
                     )}
                   >
-                    <div className="flex items-center gap-3">
-                      <div className="text-lg font-bold text-muted-foreground w-8 text-center">
+                    <div className="flex items-center gap-2 sm:gap-3 min-w-0">
+                      <span className="font-bold w-5 sm:w-8 text-center flex-shrink-0 text-sm">
                         {index === 0 && '🥇'}
                         {index === 1 && '🥈'}
                         {index === 2 && '🥉'}
                         {index > 2 && `${index + 1}.`}
-                      </div>
+                      </span>
                       <BowlerAvatar bowler={predictor} size="sm" />
-                      <p className="font-semibold">{predictor.name}</p>
+                      <p className="font-semibold text-sm truncate">{predictor.name}</p>
                     </div>
-                    <div className="text-right">
-                      <p className="text-xl font-bold text-primary">{entry.totalDifference} pins</p>
-                      <p className="text-xs text-muted-foreground">avg {entry.avgDifference.toFixed(1)} per game</p>
+                    <div className="text-right flex-shrink-0 ml-2">
+                      <p className="text-base sm:text-xl font-bold text-primary tabular-nums">{entry.totalDifference}</p>
+                      <p className="text-[10px] sm:text-xs text-muted-foreground tabular-nums">avg {entry.avgDifference.toFixed(1)}</p>
                     </div>
                   </div>
                 );

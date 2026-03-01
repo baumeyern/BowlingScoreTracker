@@ -7,97 +7,77 @@ import { Settings as SettingsIcon, Users, Calendar, Info, Trophy } from 'lucide-
 
 export function Settings() {
   return (
-    <div className="container mx-auto p-4 space-y-6 max-w-6xl">
+    <div className="container mx-auto px-3 sm:px-4 py-4 space-y-4 sm:space-y-6 max-w-6xl">
       <div>
-        <h1 className="text-3xl font-bold mb-2 flex items-center gap-2">
-          <SettingsIcon className="h-8 w-8" />
+        <h1 className="text-2xl sm:text-3xl font-bold mb-1 flex items-center gap-2">
+          <SettingsIcon className="h-6 w-6 sm:h-8 sm:w-8" />
           Settings
         </h1>
-        <p className="text-muted-foreground">Manage your league configuration</p>
+        <p className="text-xs sm:text-base text-muted-foreground">Manage your league configuration</p>
       </div>
 
       <Tabs defaultValue="leagues" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
-          <TabsTrigger value="leagues" className="flex items-center gap-2">
-            <Trophy className="h-4 w-4" />
+        <TabsList className="grid w-full grid-cols-4 h-10 sm:h-auto">
+          <TabsTrigger value="leagues" className="flex items-center gap-1.5 text-xs sm:text-sm px-1 sm:px-3">
+            <Trophy className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Leagues</span>
           </TabsTrigger>
-          <TabsTrigger value="bowlers" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
+          <TabsTrigger value="bowlers" className="flex items-center gap-1.5 text-xs sm:text-sm px-1 sm:px-3">
+            <Users className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Bowlers</span>
           </TabsTrigger>
-          <TabsTrigger value="weeks" className="flex items-center gap-2">
-            <Calendar className="h-4 w-4" />
+          <TabsTrigger value="weeks" className="flex items-center gap-1.5 text-xs sm:text-sm px-1 sm:px-3">
+            <Calendar className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">Weeks</span>
           </TabsTrigger>
-          <TabsTrigger value="about" className="flex items-center gap-2">
-            <Info className="h-4 w-4" />
+          <TabsTrigger value="about" className="flex items-center gap-1.5 text-xs sm:text-sm px-1 sm:px-3">
+            <Info className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
             <span className="hidden sm:inline">About</span>
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="leagues" className="mt-6">
+        <TabsContent value="leagues" className="mt-4 sm:mt-6">
           <LeagueManagement />
         </TabsContent>
 
-        <TabsContent value="bowlers" className="mt-6">
+        <TabsContent value="bowlers" className="mt-4 sm:mt-6">
           <BowlerManagement />
         </TabsContent>
 
-        <TabsContent value="weeks" className="mt-6">
+        <TabsContent value="weeks" className="mt-4 sm:mt-6">
           <WeekManagement />
         </TabsContent>
 
-        <TabsContent value="about" className="mt-6">
+        <TabsContent value="about" className="mt-4 sm:mt-6">
           <Card>
-            <CardHeader>
-              <CardTitle>About Bowling League Tracker</CardTitle>
+            <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
+              <CardTitle className="text-base sm:text-lg">About Bowling League Tracker</CardTitle>
               <CardDescription>Version 1.0.0</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 px-3 sm:px-6 pb-4 sm:pb-6">
               <div>
-                <h3 className="font-semibold mb-2">Handicap Formula</h3>
-                <p className="text-sm text-muted-foreground">
+                <h3 className="font-semibold mb-1 text-sm sm:text-base">Handicap Formula</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
                   Handicap = 90% of (215 - average)
                 </p>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Example: If your average is 180, your handicap is (215 - 180) × 0.9 = 31.5 = 32
+              </div>
+
+              <div>
+                <h3 className="font-semibold mb-1 text-sm sm:text-base">Prediction Scoring</h3>
+                <p className="text-xs sm:text-sm text-muted-foreground">
+                  Your prediction score is the total pin difference between predicted and actual scores. Lower is better!
                 </p>
               </div>
 
               <div>
-                <h3 className="font-semibold mb-2">Prediction Scoring</h3>
-                <p className="text-sm text-muted-foreground">
-                  Your prediction score is the total pin difference between your predicted scores and actual scores.
-                  Lower is better! The predictor with the lowest total pins off wins.
-                </p>
-              </div>
-
-              <div>
-                <h3 className="font-semibold mb-2">Tech Stack</h3>
-                <div className="flex flex-wrap gap-2">
-                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded text-xs font-medium">
-                    React 18
-                  </span>
-                  <span className="px-2 py-1 bg-blue-100 dark:bg-blue-900 text-blue-800 dark:text-blue-100 rounded text-xs font-medium">
-                    TypeScript
-                  </span>
-                  <span className="px-2 py-1 bg-green-100 dark:bg-green-900 text-green-800 dark:text-green-100 rounded text-xs font-medium">
-                    Supabase
-                  </span>
-                  <span className="px-2 py-1 bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-100 rounded text-xs font-medium">
-                    TailwindCSS
-                  </span>
-                  <span className="px-2 py-1 bg-orange-100 dark:bg-orange-900 text-orange-800 dark:text-orange-100 rounded text-xs font-medium">
-                    Recharts
-                  </span>
+                <h3 className="font-semibold mb-1 text-sm sm:text-base">Tech Stack</h3>
+                <div className="flex flex-wrap gap-1.5 sm:gap-2">
+                  {['React 18', 'TypeScript', 'Supabase', 'TailwindCSS', 'Recharts'].map(tech => (
+                    <span key={tech} className="px-2 py-0.5 bg-muted text-muted-foreground rounded text-[10px] sm:text-xs font-medium">
+                      {tech}
+                    </span>
+                  ))}
                 </div>
-              </div>
-
-              <div className="pt-4 border-t">
-                <p className="text-xs text-muted-foreground text-center">
-                  Built with ❤️ for bowling leagues
-                </p>
               </div>
             </CardContent>
           </Card>

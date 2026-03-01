@@ -147,17 +147,12 @@ function BowlerForm({
           placeholder={bowler ? "Leave blank to keep current PIN" : "4-digit PIN (optional)"}
           autoComplete="new-password"
         />
-        <p className="text-xs text-muted-foreground">
-          {bowler 
-            ? "🔒 Enter a new PIN only if you want to change it" 
-            : "Optional 4-digit code for quick login"}
-        </p>
       </div>
 
       <div className="space-y-2">
         <Label className="flex items-center gap-2">
           <Palette className="h-4 w-4" />
-          Avatar Color & Picture
+          Avatar
         </Label>
         <div className="flex items-center gap-3">
           <input
@@ -165,71 +160,64 @@ function BowlerForm({
             type="color"
             value={formData.avatarColor}
             onChange={(e) => setFormData({ ...formData, avatarColor: e.target.value })}
-            className="h-12 w-20 rounded border cursor-pointer"
+            className="h-11 w-16 rounded border cursor-pointer"
           />
-          <div className="flex items-center gap-2 flex-1">
-            <BowlerAvatar
-              bowler={{
-                name: formData.name || '?',
-                avatarColor: formData.avatarColor,
-                profilePictureUrl: bowler?.profilePictureUrl,
-              }}
-              size="lg"
-            />
-            <div className="text-sm">
-              <p className="font-medium">{formData.avatarColor}</p>
-              <p className="text-muted-foreground">Preview</p>
-            </div>
-          </div>
-        </div>
-
-        {bowler && (
-          <div className="flex items-center gap-2 pt-1">
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/*"
-              onChange={handleFileChange}
-              className="hidden"
-            />
-            <Button
-              type="button"
-              variant="outline"
-              size="sm"
-              disabled={isUploading}
-              onClick={() => fileInputRef.current?.click()}
-            >
-              <Camera className="h-4 w-4 mr-2" />
-              {isUploading ? 'Uploading...' : bowler.profilePictureUrl ? 'Change Photo' : 'Upload Photo'}
-            </Button>
-            {bowler.profilePictureUrl && (
+          <BowlerAvatar
+            bowler={{
+              name: formData.name || '?',
+              avatarColor: formData.avatarColor,
+              profilePictureUrl: bowler?.profilePictureUrl,
+            }}
+            size="lg"
+          />
+          {bowler && (
+            <div className="flex flex-col gap-1.5">
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="hidden"
+              />
               <Button
                 type="button"
-                variant="ghost"
+                variant="outline"
                 size="sm"
                 disabled={isUploading}
-                onClick={handleRemovePicture}
+                onClick={() => fileInputRef.current?.click()}
+                className="h-8 text-xs"
               >
-                <X className="h-4 w-4 mr-2" />
-                Remove
+                <Camera className="h-3.5 w-3.5 mr-1.5" />
+                {isUploading ? 'Uploading...' : bowler.profilePictureUrl ? 'Change' : 'Upload'}
               </Button>
-            )}
-          </div>
-        )}
-        <p className="text-xs text-muted-foreground">
-          {bowler ? 'Color is used as a border around your photo' : 'You can upload a photo after creating the bowler'}
+              {bowler.profilePictureUrl && (
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="sm"
+                  disabled={isUploading}
+                  onClick={handleRemovePicture}
+                  className="h-8 text-xs"
+                >
+                  <X className="h-3.5 w-3.5 mr-1.5" />
+                  Remove
+                </Button>
+              )}
+            </div>
+          )}
+        </div>
+        <p className="text-[10px] sm:text-xs text-muted-foreground">
+          {bowler ? 'Color is used as a border around your photo' : 'Upload a photo after creating the bowler'}
         </p>
       </div>
 
-      <div className="flex gap-2 pt-4">
-        <Button
-          type="submit"
-          disabled={createBowler.isPending || updateBowler.isPending}
-          className="flex-1"
-        >
-          {createBowler.isPending || updateBowler.isPending ? 'Saving...' : (bowler ? 'Update Bowler' : 'Create Bowler')}
-        </Button>
-      </div>
+      <Button
+        type="submit"
+        disabled={createBowler.isPending || updateBowler.isPending}
+        className="w-full"
+      >
+        {createBowler.isPending || updateBowler.isPending ? 'Saving...' : (bowler ? 'Update Bowler' : 'Create Bowler')}
+      </Button>
     </form>
   );
 }
@@ -246,17 +234,17 @@ export function BowlerManagement() {
 
   return (
     <Card>
-      <CardHeader>
+      <CardHeader className="px-3 sm:px-6 pt-4 sm:pt-6 pb-3">
         <div className="flex items-center justify-between">
-          <CardTitle>Manage Bowlers</CardTitle>
+          <CardTitle className="text-base sm:text-lg">Manage Bowlers</CardTitle>
           <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
             <DialogTrigger asChild>
-              <Button>
-                <Plus className="h-4 w-4 mr-2" />
-                Add Bowler
+              <Button size="sm">
+                <Plus className="h-4 w-4 mr-1.5" />
+                Add
               </Button>
             </DialogTrigger>
-            <DialogContent>
+            <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
               <DialogHeader>
                 <DialogTitle>Add New Bowler</DialogTitle>
               </DialogHeader>
@@ -265,29 +253,20 @@ export function BowlerManagement() {
           </Dialog>
         </div>
       </CardHeader>
-      <CardContent>
-        <div className="space-y-3">
+      <CardContent className="px-3 sm:px-6 pb-4 sm:pb-6">
+        <div className="space-y-2">
           {bowlers?.map((bowler) => (
             <div
               key={bowler.id}
-              className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
+              className="flex items-center justify-between p-2.5 sm:p-4 border rounded-lg active:bg-muted/50 transition-colors"
             >
-              <div className="flex items-center gap-4">
-                <BowlerAvatar bowler={bowler} size="lg" />
-                <div>
-                  <p className="font-semibold text-lg">{bowler.name}</p>
+              <div className="flex items-center gap-2.5 sm:gap-4 min-w-0">
+                <BowlerAvatar bowler={bowler} size="sm" />
+                <div className="min-w-0">
+                  <p className="font-semibold text-sm sm:text-lg truncate">{bowler.name}</p>
                   {bowler.nickname && (
-                    <p className="text-sm text-muted-foreground">{bowler.nickname}</p>
+                    <p className="text-[10px] sm:text-sm text-muted-foreground truncate">{bowler.nickname}</p>
                   )}
-                  <div className="flex items-center gap-2 mt-1">
-                    <div className="flex items-center gap-1 text-xs">
-                      <Palette className="h-3 w-3" />
-                      <span className="text-muted-foreground">{bowler.avatarColor}</span>
-                    </div>
-                    {bowler.pinCode && (
-                      <span className="text-xs text-muted-foreground">• PIN: ••••</span>
-                    )}
-                  </div>
                 </div>
               </div>
 
@@ -300,12 +279,13 @@ export function BowlerManagement() {
                     variant="outline"
                     size="sm"
                     onClick={() => setEditingBowler(bowler)}
+                    className="flex-shrink-0 ml-2 h-8"
                   >
-                    <Edit className="h-4 w-4 mr-2" />
-                    Edit
+                    <Edit className="h-3.5 w-3.5 sm:mr-1.5" />
+                    <span className="hidden sm:inline">Edit</span>
                   </Button>
                 </DialogTrigger>
-                <DialogContent>
+                <DialogContent className="max-w-[calc(100vw-2rem)] sm:max-w-lg">
                   <DialogHeader>
                     <DialogTitle>Edit Bowler</DialogTitle>
                   </DialogHeader>
@@ -323,7 +303,7 @@ export function BowlerManagement() {
 
           {(!bowlers || bowlers.length === 0) && (
             <div className="text-center py-8 text-muted-foreground">
-              <p>No bowlers yet. Click "Add Bowler" to get started!</p>
+              <p className="text-sm">No bowlers yet. Tap "Add" to get started!</p>
             </div>
           )}
         </div>
