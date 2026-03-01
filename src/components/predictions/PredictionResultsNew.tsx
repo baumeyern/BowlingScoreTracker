@@ -3,6 +3,7 @@ import { usePredictionResults } from '@/hooks/usePredictions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import { Target, Trophy } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -85,12 +86,7 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
             <CardHeader>
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div
-                    className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: target.avatarColor }}
-                  >
-                    {target.name.charAt(0)}
-                  </div>
+                  <BowlerAvatar bowler={target} size="md" />
                   <div>
                     <CardTitle className="text-lg">Predictions for {target.name}</CardTitle>
                     {hasTargetActuals && (
@@ -120,12 +116,7 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
                   return (
                     <div key={predictorId} className="border rounded-lg p-3">
                       <div className="flex items-center gap-2 mb-3">
-                        <div
-                          className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                          style={{ backgroundColor: predictor.avatarColor }}
-                        >
-                          {predictor.name.charAt(0)}
-                        </div>
+                        <BowlerAvatar bowler={predictor} size="sm" />
                         <div className="flex-1">
                           <p className="font-medium">{predictor.name}</p>
                         </div>
@@ -212,12 +203,7 @@ export function PredictionResultsNew({ weekId }: PredictionResultsNewProps) {
                         {index === 2 && '🥉'}
                         {index > 2 && `${index + 1}.`}
                       </div>
-                      <div
-                        className="h-9 w-9 rounded-full flex items-center justify-center text-white font-bold"
-                        style={{ backgroundColor: predictor.avatarColor }}
-                      >
-                        {predictor.name.charAt(0)}
-                      </div>
+                      <BowlerAvatar bowler={predictor} size="sm" />
                       <p className="font-semibold">{predictor.name}</p>
                     </div>
                     <div className="text-right">

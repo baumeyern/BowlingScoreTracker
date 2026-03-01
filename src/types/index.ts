@@ -13,6 +13,7 @@ export interface Bowler {
   nickname?: string;
   pinCode?: string;
   avatarColor: string;
+  profilePictureUrl?: string;
   createdAt: string;
 }
 

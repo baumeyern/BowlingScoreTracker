@@ -20,6 +20,7 @@ export function useBowlers() {
         nickname: bowler.nickname,
         pinCode: bowler.pin_code,
         avatarColor: bowler.avatar_color,
+        profilePictureUrl: bowler.profile_picture_url,
         createdAt: bowler.created_at,
       })) as Bowler[];
     },
@@ -37,6 +38,7 @@ export function useCreateBowler() {
         nickname: bowler.nickname || null,
         pin_code: bowler.pinCode || null,
         avatar_color: bowler.avatarColor,
+        profile_picture_url: bowler.profilePictureUrl || null,
       };
       
       const { data, error } = await supabase
@@ -50,13 +52,13 @@ export function useCreateBowler() {
         throw error;
       }
       
-      // Map snake_case back to camelCase
       return {
         id: data.id,
         name: data.name,
         nickname: data.nickname,
         pinCode: data.pin_code,
         avatarColor: data.avatar_color,
+        profilePictureUrl: data.profile_picture_url,
         createdAt: data.created_at,
       } as Bowler;
     },
@@ -77,6 +79,7 @@ export function useUpdateBowler() {
       if (updates.nickname !== undefined) dbUpdates.nickname = updates.nickname || null;
       if (updates.pinCode !== undefined) dbUpdates.pin_code = updates.pinCode || null;
       if (updates.avatarColor !== undefined) dbUpdates.avatar_color = updates.avatarColor;
+      if (updates.profilePictureUrl !== undefined) dbUpdates.profile_picture_url = updates.profilePictureUrl || null;
       
       const { data, error } = await supabase
         .from('bowlers')
@@ -90,13 +93,13 @@ export function useUpdateBowler() {
         throw error;
       }
       
-      // Map snake_case back to camelCase
       return {
         id: data.id,
         name: data.name,
         nickname: data.nickname,
         pinCode: data.pin_code,
         avatarColor: data.avatar_color,
+        profilePictureUrl: data.profile_picture_url,
         createdAt: data.created_at,
       } as Bowler;
     },

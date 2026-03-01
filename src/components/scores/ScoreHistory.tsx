@@ -5,6 +5,7 @@ import { useSelectedLeague } from '@/contexts/LeagueContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import { History } from 'lucide-react';
 
 export function ScoreHistory() {
@@ -68,10 +69,7 @@ export function ScoreHistory() {
                         <tr key={bowler.id} className="border-b last:border-0">
                           <td className="py-3 px-2">
                             <div className="flex items-center gap-2">
-                              <div
-                                className="h-3 w-3 rounded-full"
-                                style={{ backgroundColor: bowler.avatarColor }}
-                              />
+                              <BowlerAvatar bowler={bowler} size="xs" />
                               <span className="font-medium">{bowler.name}</span>
                             </div>
                           </td>

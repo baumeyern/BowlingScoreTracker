@@ -1,6 +1,7 @@
 import { Card, CardContent } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { GamePredictionInput } from './GamePredictionInput';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import type { Bowler } from '@/types';
 
 interface PredictionCardNewProps {
@@ -33,12 +34,7 @@ export function PredictionCardNew({
       <CardContent className="p-4">
         <div className="flex items-start justify-between mb-4 gap-3">
           <div className="flex items-center gap-3 flex-1">
-            <div
-              className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold flex-shrink-0"
-              style={{ backgroundColor: targetBowler.avatarColor }}
-            >
-              {targetBowler.name.charAt(0)}
-            </div>
+            <BowlerAvatar bowler={targetBowler} size="md" />
             <div className="flex-1">
               <Label className="text-base font-semibold break-words">{targetBowler.name}</Label>
               {targetBowler.nickname && (

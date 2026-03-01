@@ -16,6 +16,7 @@ import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { calculatePredictionLeaderboard } from '@/lib/predictions';
 import { AlertCircle, Edit, TrendingUp, BarChart3 } from 'lucide-react';
 import { formatDate } from '@/lib/utils';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 
 export function Dashboard() {
   const { data: bowlers, isLoading: bowlersLoading } = useBowlers();
@@ -209,12 +210,7 @@ export function Dashboard() {
               <div>
                 <p className="text-sm text-muted-foreground mb-2">Prediction Game Leader</p>
                 <div className="flex items-center gap-3">
-                  <div
-                    className="h-12 w-12 rounded-full flex items-center justify-center text-white text-xl font-bold"
-                    style={{ backgroundColor: topPredictorBowler.avatarColor }}
-                  >
-                    {topPredictorBowler.name.charAt(0)}
-                  </div>
+                  <BowlerAvatar bowler={topPredictorBowler} size="lg" />
                   <div>
                     <p className="text-xl font-bold">{topPredictorBowler.name}</p>
                     <p className="text-sm text-muted-foreground">{topPredictor?.predictionsCount} predictions</p>

@@ -5,6 +5,7 @@ import { useSelectedLeague } from '@/contexts/LeagueContext';
 import { useLeagues } from '@/hooks/useLeagues';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 
 export function Leaderboard() {
   const { data: results, isLoading: resultsLoading } = usePredictionResults();
@@ -84,12 +85,7 @@ export function Leaderboard() {
                     return (
                       <div key={winner.weekNumber} className="flex items-center justify-between p-2 border rounded">
                         <div className="flex items-center gap-2">
-                          <div
-                            className="h-8 w-8 rounded-full flex items-center justify-center text-white text-sm font-bold"
-                            style={{ backgroundColor: bowler?.avatarColor }}
-                          >
-                            {bowler?.name.charAt(0)}
-                          </div>
+                          {bowler && <BowlerAvatar bowler={bowler} size="sm" />}
                           <div>
                             <p className="text-sm font-medium">Week {winner.weekNumber}</p>
                             <p className="text-xs text-muted-foreground">{bowler?.name}</p>

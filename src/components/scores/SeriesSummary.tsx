@@ -1,4 +1,5 @@
 import { Card } from '@/components/ui/card';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import { calculateSeriesWithHandicap } from '@/lib/handicap';
 
 interface SeriesSummaryProps {
@@ -6,9 +7,10 @@ interface SeriesSummaryProps {
   handicap: number;
   bowlerName: string;
   bowlerColor: string;
+  bowlerPictureUrl?: string;
 }
 
-export function SeriesSummary({ gameScores, handicap, bowlerName, bowlerColor }: SeriesSummaryProps) {
+export function SeriesSummary({ gameScores, handicap, bowlerName, bowlerColor, bowlerPictureUrl }: SeriesSummaryProps) {
   const validScores = gameScores.filter((s): s is number => s !== null);
   const series = validScores.length > 0 
     ? calculateSeriesWithHandicap(validScores, handicap)
@@ -20,9 +22,10 @@ export function SeriesSummary({ gameScores, handicap, bowlerName, bowlerColor }:
     <Card className="p-4 bg-gradient-to-br from-background to-muted/20">
       <div className="flex items-center justify-between mb-3">
         <div className="flex items-center gap-2">
-          <div
-            className="h-4 w-4 rounded-full"
-            style={{ backgroundColor: bowlerColor }}
+          <BowlerAvatar
+            bowler={{ name: bowlerName, avatarColor: bowlerColor, profilePictureUrl: bowlerPictureUrl }}
+            size="xs"
+            className="!h-4 !w-4"
           />
           <h3 className="font-semibold text-lg">{bowlerName}</h3>
         </div>

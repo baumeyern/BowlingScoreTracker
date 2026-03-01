@@ -4,6 +4,7 @@ import { useSelectedLeague } from '@/contexts/LeagueContext';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
 import { EmptyState } from '@/components/common/EmptyState';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import { Trophy } from 'lucide-react';
 import { calculatePredictionLeaderboard } from '@/lib/predictions';
 
@@ -65,12 +66,7 @@ export function PredictionLeaderboard() {
                     {index === 2 && '🥉'}
                     {index > 2 && `${index + 1}.`}
                   </div>
-                  <div
-                    className="h-12 w-12 rounded-full flex items-center justify-center text-white text-lg font-bold"
-                    style={{ backgroundColor: bowler.avatarColor }}
-                  >
-                    {bowler.name.charAt(0)}
-                  </div>
+                  <BowlerAvatar bowler={bowler} size="lg" />
                   <div>
                     <p className="font-semibold text-lg">{bowler.name}</p>
                     <p className="text-sm text-muted-foreground">

@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useBowlers, useCreateBowler, useUpdateBowler } from '@/hooks/useBowlers';
+import { useUploadProfilePicture, useRemoveProfilePicture } from '@/hooks/useProfilePicture';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
-import { Edit, Plus, Palette } from 'lucide-react';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
+import { Edit, Plus, Palette, Camera, X } from 'lucide-react';
 import { toast } from 'sonner';
 import type { Bowler } from '@/types';
 
@@ -27,12 +29,51 @@ function BowlerForm({
   const [formData, setFormData] = useState<BowlerFormData>({
     name: bowler?.name || '',
     nickname: bowler?.nickname || '',
-    pinCode: '', // Always empty for privacy - only update if new value entered
+    pinCode: '',
     avatarColor: bowler?.avatarColor || '#3B82F6',
   });
 
   const createBowler = useCreateBowler();
   const updateBowler = useUpdateBowler();
+  const uploadPicture = useUploadProfilePicture();
+  const removePicture = useRemoveProfilePicture();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !bowler) return;
+
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file');
+      return;
+    }
+
+    if (file.size > 5 * 1024 * 1024) {
+      toast.error('Image must be under 5MB');
+      return;
+    }
+
+    try {
+      await uploadPicture.mutateAsync({ bowlerId: bowler.id, file });
+      toast.success('Profile picture uploaded!');
+    } catch (error) {
+      console.error('Error uploading picture:', error);
+      toast.error('Failed to upload picture');
+    }
+
+    if (fileInputRef.current) fileInputRef.current.value = '';
+  };
+
+  const handleRemovePicture = async () => {
+    if (!bowler) return;
+    try {
+      await removePicture.mutateAsync(bowler.id);
+      toast.success('Profile picture removed');
+    } catch (error) {
+      console.error('Error removing picture:', error);
+      toast.error('Failed to remove picture');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -44,14 +85,12 @@ function BowlerForm({
 
     try {
       if (bowler) {
-        // When editing, only update PIN if a new value was entered
         const updates: Partial<Bowler> = {
           name: formData.name,
           nickname: formData.nickname || undefined,
           avatarColor: formData.avatarColor,
         };
         
-        // Only update PIN if user entered a new one
         if (formData.pinCode.trim()) {
           updates.pinCode = formData.pinCode;
         }
@@ -71,6 +110,8 @@ function BowlerForm({
       toast.error('Failed to save bowler');
     }
   };
+
+  const isUploading = uploadPicture.isPending || removePicture.isPending;
 
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
@@ -114,9 +155,9 @@ function BowlerForm({
       </div>
 
       <div className="space-y-2">
-        <Label htmlFor="avatarColor" className="flex items-center gap-2">
+        <Label className="flex items-center gap-2">
           <Palette className="h-4 w-4" />
-          Avatar Color
+          Avatar Color & Picture
         </Label>
         <div className="flex items-center gap-3">
           <input
@@ -127,19 +168,57 @@ function BowlerForm({
             className="h-12 w-20 rounded border cursor-pointer"
           />
           <div className="flex items-center gap-2 flex-1">
-            <div
-              className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold text-xl"
-              style={{ backgroundColor: formData.avatarColor }}
-            >
-              {formData.name.charAt(0).toUpperCase() || '?'}
-            </div>
+            <BowlerAvatar
+              bowler={{
+                name: formData.name || '?',
+                avatarColor: formData.avatarColor,
+                profilePictureUrl: bowler?.profilePictureUrl,
+              }}
+              size="lg"
+            />
             <div className="text-sm">
               <p className="font-medium">{formData.avatarColor}</p>
               <p className="text-muted-foreground">Preview</p>
             </div>
           </div>
         </div>
-        <p className="text-xs text-muted-foreground">Click to choose any color you like</p>
+
+        {bowler && (
+          <div className="flex items-center gap-2 pt-1">
+            <input
+              ref={fileInputRef}
+              type="file"
+              accept="image/*"
+              onChange={handleFileChange}
+              className="hidden"
+            />
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              disabled={isUploading}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              <Camera className="h-4 w-4 mr-2" />
+              {isUploading ? 'Uploading...' : bowler.profilePictureUrl ? 'Change Photo' : 'Upload Photo'}
+            </Button>
+            {bowler.profilePictureUrl && (
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                disabled={isUploading}
+                onClick={handleRemovePicture}
+              >
+                <X className="h-4 w-4 mr-2" />
+                Remove
+              </Button>
+            )}
+          </div>
+        )}
+        <p className="text-xs text-muted-foreground">
+          {bowler ? 'Color is used as a border around your photo' : 'You can upload a photo after creating the bowler'}
+        </p>
       </div>
 
       <div className="flex gap-2 pt-4">
@@ -194,12 +273,7 @@ export function BowlerManagement() {
               className="flex items-center justify-between p-4 border rounded-lg hover:bg-muted/50 transition-colors"
             >
               <div className="flex items-center gap-4">
-                <div
-                  className="h-12 w-12 rounded-full flex items-center justify-center text-white font-bold text-xl"
-                  style={{ backgroundColor: bowler.avatarColor }}
-                >
-                  {bowler.name.charAt(0)}
-                </div>
+                <BowlerAvatar bowler={bowler} size="lg" />
                 <div>
                   <p className="font-semibold text-lg">{bowler.name}</p>
                   {bowler.nickname && (

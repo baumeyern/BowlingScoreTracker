@@ -8,6 +8,7 @@ import { SeriesSummary } from './SeriesSummary';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import { toast } from 'sonner';
 import { isValidScore } from '@/lib/utils';
 import type { Game } from '@/types';
@@ -144,12 +145,7 @@ export function WeeklyScoreEntry({ weekId }: WeeklyScoreEntryProps) {
             <CardHeader className="pb-4">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div
-                    className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: bowler.avatarColor }}
-                  >
-                    {bowler.name.charAt(0)}
-                  </div>
+                  <BowlerAvatar bowler={bowler} size="md" />
                   <div>
                     <CardTitle className="text-xl">{bowler.name}</CardTitle>
                     {bowler.nickname && (
@@ -187,6 +183,7 @@ export function WeeklyScoreEntry({ weekId }: WeeklyScoreEntryProps) {
                 handicap={handicap}
                 bowlerName={bowler.name}
                 bowlerColor={bowler.avatarColor}
+                bowlerPictureUrl={bowler.profilePictureUrl}
               />
             </CardContent>
           </Card>

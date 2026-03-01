@@ -3,6 +3,7 @@ import { useWeeklySeries } from '@/hooks/useGames';
 import { useBowlerStats } from '@/hooks/useStats';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import { Award } from 'lucide-react';
 
 export function PersonalBests() {
@@ -34,12 +35,7 @@ export function PersonalBests() {
             return (
               <div key={bowler.id} className="flex items-center justify-between p-3 border rounded-lg">
                 <div className="flex items-center gap-3">
-                  <div
-                    className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold"
-                    style={{ backgroundColor: bowler.avatarColor }}
-                  >
-                    {bowler.name.charAt(0)}
-                  </div>
+                  <BowlerAvatar bowler={bowler} size="md" />
                   <div>
                     <p className="font-semibold">{bowler.name}</p>
                     {stats && (

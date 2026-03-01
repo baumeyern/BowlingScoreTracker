@@ -1,6 +1,7 @@
 import { useBowlers } from '@/hooks/useBowlers';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { LoadingSpinner } from '@/components/common/LoadingSpinner';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import type { Bowler } from '@/types';
 
 interface BowlerSelectorProps {
@@ -25,10 +26,7 @@ export function BowlerSelector({ value, onChange, label = 'Select Bowler', class
           {bowlers?.map((bowler: Bowler) => (
             <SelectItem key={bowler.id} value={bowler.id}>
               <div className="flex items-center gap-2">
-                <div
-                  className="h-3 w-3 rounded-full"
-                  style={{ backgroundColor: bowler.avatarColor }}
-                />
+                <BowlerAvatar bowler={bowler} size="xs" />
                 <span>{bowler.name}</span>
                 {bowler.nickname && (
                   <span className="text-muted-foreground">({bowler.nickname})</span>

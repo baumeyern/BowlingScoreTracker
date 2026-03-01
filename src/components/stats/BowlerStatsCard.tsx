@@ -1,4 +1,5 @@
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { BowlerAvatar } from '@/components/common/BowlerAvatar';
 import type { Bowler, BowlerStats } from '@/types';
 
 interface BowlerStatsCardProps {
@@ -12,12 +13,7 @@ export function BowlerStatsCard({ bowler, stats }: BowlerStatsCardProps) {
       <Card>
         <CardHeader>
           <div className="flex items-center gap-3">
-            <div
-              className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold"
-              style={{ backgroundColor: bowler.avatarColor }}
-            >
-              {bowler.name.charAt(0)}
-            </div>
+            <BowlerAvatar bowler={bowler} size="md" />
             <CardTitle>{bowler.name}</CardTitle>
           </div>
         </CardHeader>
@@ -32,12 +28,7 @@ export function BowlerStatsCard({ bowler, stats }: BowlerStatsCardProps) {
     <Card>
       <CardHeader>
         <div className="flex items-center gap-3">
-          <div
-            className="h-10 w-10 rounded-full flex items-center justify-center text-white font-bold"
-            style={{ backgroundColor: bowler.avatarColor }}
-          >
-            {bowler.name.charAt(0)}
-          </div>
+          <BowlerAvatar bowler={bowler} size="md" />
           <div>
             <CardTitle>{bowler.name}</CardTitle>
             {bowler.nickname && (
