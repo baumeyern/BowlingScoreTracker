@@ -1,10 +1,11 @@
 import { cn } from '@/lib/utils';
 import type { Bowler } from '@/types';
 
-type AvatarSize = 'xs' | 'sm' | 'md' | 'lg';
+type AvatarSize = 'xs' | 'xxs' | 'sm' | 'md' | 'lg';
 
 const sizeConfig: Record<AvatarSize, { container: string; text: string; border: string }> = {
   xs: { container: 'h-3 w-3', text: 'text-[0px]', border: 'border' },
+  xxs: { container: 'h-6 w-6', text: 'text-xs', border: 'border-[1.5px]' },
   sm: { container: 'h-8 w-8', text: 'text-sm', border: 'border-2' },
   md: { container: 'h-10 w-10', text: 'text-base', border: 'border-2' },
   lg: { container: 'h-12 w-12', text: 'text-xl', border: 'border-[3px]' },

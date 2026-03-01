@@ -178,10 +178,9 @@ export function Dashboard() {
                   <div className="flex items-center justify-between text-sm gap-3">
                     <div className="flex items-center gap-2 flex-1">
                       <span className="font-semibold w-6 flex-shrink-0">{index + 1}.</span>
-                      <div
-                        className="h-6 w-6 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: standing.bowler?.avatarColor }}
-                      />
+                      {standing.bowler && (
+                        <BowlerAvatar bowler={standing.bowler} size="xxs" />
+                      )}
                       <span className="font-medium">{standing.bowler?.name}</span>
                       {index === 0 && <span className="text-lg flex-shrink-0">🔥</span>}
                     </div>
